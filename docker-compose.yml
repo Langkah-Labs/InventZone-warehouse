@@ -1,4 +1,5 @@
 version: "3.6"
+
 services:
   postgres:
     image: postgres:15
@@ -10,6 +11,36 @@ services:
       POSTGRES_DB: odn
     ports:
       - 5432:5432
+  
+  # TODO: change config to production mirror
+  auth:
+    image: quay.io/keycloak/keycloak:22.0.1
+    restart: always
+    ports:
+      - "8082:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin 
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres/odn
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: inventzone
+    command: 
+      - start-dev 
+      - --health-enabled=true
+      - --metrics-enabled=true
+      # - --import-realm
+    depends_on:
+      - postgres
+    # healthcheck:
+    #   test: ["CMD", "curl -f http://localhost:8080/health"]
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 5
+    #   start_period: 10s
+    # volumes:
+    #   - /home/keycloak/realm.json:/opt/keycloak/data/import/realm.json
+
   graphql-engine:
     image: hasura/graphql-engine:v2.31.0
     ports:
@@ -28,11 +59,18 @@ services:
       ## uncomment next line to run console offline (i.e load console assets from server instead of CDN)
       # HASURA_GRAPHQL_CONSOLE_ASSETS_DIR: /srv/console-assets
       ## uncomment next line to set an admin secret
-      # HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
+      # TODO: change the admin secret more secure
+      HASURA_GRAPHQL_ADMIN_SECRET: InventZone_2023
       HASURA_GRAPHQL_METADATA_DEFAULTS: '{"backend_configs":{"dataconnector":{"athena":{"uri":"http://data-connector-agent:8081/api/v1/athena"},"mariadb":{"uri":"http://data-connector-agent:8081/api/v1/mariadb"},"mysql8":{"uri":"http://data-connector-agent:8081/api/v1/mysql"},"oracle":{"uri":"http://data-connector-agent:8081/api/v1/oracle"},"snowflake":{"uri":"http://data-connector-agent:8081/api/v1/snowflake"}}}}'
+      HASURA_GRAPHQL_JWT_SECRET: '{"jwk_url": "http://auth:8080/realms/odn/protocol/openid-connect/certs"}'
     depends_on:
-      data-connector-agent:
-        condition: service_healthy
+      - auth
+      - data-connector-agent
+      # auth:
+      #   condition: service_completed_successfully
+      # data-connector-agent:
+      #   condition: service_healthy
+
   data-connector-agent:
     image: hasura/graphql-data-connector:v2.31.0
     restart: always
@@ -61,24 +99,6 @@ services:
       MINIO_ROOT_USER: "root"
       MINIO_ROOT_PASSWORD: "root1234"
     command: minio server /data --console-address ":9090"
-
-  # TODO: change config to production ready
-  auth:
-    image: quay.io/keycloak/keycloak:22.0.1
-    ports:
-      - "8082:8080"
-    environment:
-      KEYCLOAK_ADMIN: admin 
-      KEYCLOAK_ADMIN_PASSWORD: admin
-    command: 
-      - start-dev 
-      # - --db postgres
-      # - --db-url 'jdbc:postgresql://postgres:inventzone@postgres:5432/odn'
-    depends_on:
-      - postgres
-    #   - --import-realm
-    # volumes:
-    #   - /home/keycloak/realm.json:/opt/keycloak/data/import/realm.json
 
 volumes:
   db_data:
