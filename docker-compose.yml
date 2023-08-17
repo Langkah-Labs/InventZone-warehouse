@@ -11,35 +11,30 @@ services:
       POSTGRES_DB: odn
     ports:
       - 5432:5432
-  
-  # TODO: change config to production mirror
-  auth:
-    image: quay.io/keycloak/keycloak:22.0.1
-    restart: always
-    ports:
-      - "8082:8080"
-    environment:
-      KEYCLOAK_ADMIN: admin 
-      KEYCLOAK_ADMIN_PASSWORD: admin
-      KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://postgres/odn
-      KC_DB_USERNAME: postgres
-      KC_DB_PASSWORD: inventzone
-    command: 
-      - start-dev 
-      - --health-enabled=true
-      - --metrics-enabled=true
-      # - --import-realm
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-d", "odn"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  supertokens:
+    image: registry.supertokens.io/supertokens/supertokens-postgresql:6.0
     depends_on:
-      - postgres
-    # healthcheck:
-    #   test: ["CMD", "curl -f http://localhost:8080/health"]
-    #   interval: 10s
-    #   timeout: 5s
-    #   retries: 5
-    #   start_period: 10s
-    # volumes:
-    #   - /home/keycloak/realm.json:/opt/keycloak/data/import/realm.json
+      postgres:
+        condition: service_healthy
+    ports:
+      - 3567:3567
+    environment:
+      POSTGRESQL_CONNECTION_URI: "postgresql://postgres:inventzone@postgres:5432/odn"
+    # networks:
+    #   - app_network
+    restart: unless-stopped
+    healthcheck:
+      test: >
+        bash -c 'exec 3<>/dev/tcp/127.0.0.1/3567 && echo -e "GET /hello HTTP/1.1\r\nhost: 127.0.0.1:3567\r\nConnection: close\r\n\r\n" >&3 && cat <&3 | grep "Hello"'
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   graphql-engine:
     image: hasura/graphql-engine:v2.31.0
@@ -62,14 +57,14 @@ services:
       # TODO: change the admin secret more secure
       HASURA_GRAPHQL_ADMIN_SECRET: InventZone_2023
       HASURA_GRAPHQL_METADATA_DEFAULTS: '{"backend_configs":{"dataconnector":{"athena":{"uri":"http://data-connector-agent:8081/api/v1/athena"},"mariadb":{"uri":"http://data-connector-agent:8081/api/v1/mariadb"},"mysql8":{"uri":"http://data-connector-agent:8081/api/v1/mysql"},"oracle":{"uri":"http://data-connector-agent:8081/api/v1/oracle"},"snowflake":{"uri":"http://data-connector-agent:8081/api/v1/snowflake"}}}}'
-      HASURA_GRAPHQL_JWT_SECRET: '{"jwk_url": "http://auth:8080/realms/odn/protocol/openid-connect/certs"}'
+      # HASURA_GRAPHQL_JWT_SECRET: '{"jwk_url": "http://auth:8080/realms/odn/protocol/openid-connect/certs"}'
     depends_on:
-      - auth
-      - data-connector-agent
+      # - auth
+      # - data-connector-agent
       # auth:
       #   condition: service_completed_successfully
-      # data-connector-agent:
-      #   condition: service_healthy
+      data-connector-agent:
+        condition: service_healthy
 
   data-connector-agent:
     image: hasura/graphql-data-connector:v2.31.0
