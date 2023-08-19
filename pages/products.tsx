@@ -6,17 +6,18 @@ import type { NextPageWithLayout } from "./_app";
 
 const raleway = Raleway({ subsets: ["latin"] });
 
-const Home: NextPageWithLayout = () => {
+const Products: NextPageWithLayout = () => {
   return (
     <main className={`${raleway.className}`}>
-      <h1>Dashboard</h1>
+      {/* TODO: change the content here */}
+      <h1>Products</h1>
     </main>
   );
 };
 
-Home.getLayout = function getLayout(page: ReactElement) {
+Products.getLayout = function getLayout(page: ReactElement) {
   // TODO: add session auth component
   return <SidebarLayout>{page}</SidebarLayout>;
 };
 
-export default Home;
+export default Products;

@@ -62,27 +62,86 @@ export default function Login() {
             <div>
               <form action="#" method="POST" className="space-y-6">
                 <div className="mt-2">
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    placeholder="you@example.com"
-                    className="block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#4F99FF] sm:text-sm sm:leading-6"
-                  />
+                  <div className="relative mt-2 rounded-md shadow-sm">
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                      <svg
+                        className="text-[#2A4365]"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        fill="none"
+                      >
+                        <path
+                          stroke="#2A4365"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2Z"
+                        />
+                        <path
+                          stroke="#2A4365"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="m22 6-10 7L2 6"
+                        />
+                      </svg>
+                    </div>
+                    <input
+                      type="text"
+                      name="email"
+                      id="email"
+                      className="block w-full bg-[#4F5C6233] rounded-md border-0 py-5 pl-14 pr-12 text-[#40404099] placeholder:text-[#40404099] focus:ring-2 focus:ring-inset focus:[#4F99FF] sm:text-sm sm:leading-6"
+                      placeholder="you@example.com"
+                      aria-describedby="email"
+                    />
+                  </div>
                 </div>
 
                 <div className="mt-2">
-                  <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    autoComplete="current-password"
-                    required
-                    placeholder="at least 8 characters"
-                    className="block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#4F99FF] sm:text-sm sm:leading-6"
-                  />
+                  <div className="relative mt-2 rounded-md shadow-sm">
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        fill="none"
+                      >
+                        <path
+                          stroke="#2A4365"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M19 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2ZM7 11V7a5 5 0 1 1 10 0v4"
+                        />
+                      </svg>
+                    </div>
+                    <input
+                      type="text"
+                      name="password"
+                      id="password"
+                      className="block w-full bg-[#4F5C6233] rounded-md border-0 py-5 pl-14 pr-12 text-[#40404099] placeholder:text-[#40404099] focus:ring-2 focus:ring-inset focus:ring-[#4F99FF] sm:text-sm sm:leading-6"
+                      placeholder="at least 8 characters"
+                      aria-describedby="password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => console.log("clicked!")}
+                      className="absolute inset-y-0 right-0 flex items-center pr-4"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        fill="none"
+                      >
+                        <path
+                          fill="#6D8098"
+                          d="M24 12.425v-.572C20.735 7.446 16.75 5.16 12.044 5c-.015 0-.03 0-.046.002C7.133 5.188 3.134 7.492 0 11.913v.572c3.265 4.408 7.25 6.692 11.956 6.853h.042c4.866-.184 8.866-2.489 12.002-6.913Zm-6.835-.256c0 1.416-.505 2.625-1.513 3.627-1.009 1.001-2.226 1.502-3.652 1.502-1.426 0-2.643-.5-3.652-1.502-1.009-1.002-1.513-2.211-1.513-3.627s.504-2.625 1.513-3.626C9.357 7.54 10.574 7.04 12 7.04c1.426 0 2.643.5 3.652 1.503 1.008 1.001 1.513 2.21 1.513 3.626Zm-3.223-1.924a2.652 2.652 0 0 0-1.94-.797c-.757 0-1.404.265-1.94.797a2.615 2.615 0 0 0-.803 1.926c0 .754.268 1.397.804 1.929a2.652 2.652 0 0 0 1.94.798c.757 0 1.403-.266 1.939-.798a2.614 2.614 0 0 0 .806-1.929c0-.752-.269-1.394-.806-1.926Z"
+                        />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
 
                 <div className="flex items-center justify-between">

@@ -16,74 +16,218 @@ export default function Register() {
             <div>
               <form action="#" method="POST" className="space-y-6">
                 <div className="mt-2">
-                  <select
-                    id="team"
-                    name="team"
-                    placeholder="Select Team"
-                    className="block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#4F99FF] sm:text-sm sm:leading-6"
-                  >
-                    <option disabled>Select Team</option>
-                    <option value="team_a">Team A</option>
-                    <option value="team_b">Team B</option>
-                  </select>
+                  <div className="relative mt-2 rounded-md shadow-sm">
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        fill="none"
+                      >
+                        <path
+                          stroke="#2A4365"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M16.222 20v-1.778a3.556 3.556 0 0 0-3.555-3.555H5.556A3.556 3.556 0 0 0 2 18.222V20M9.111 11.111a3.556 3.556 0 1 0 0-7.111 3.556 3.556 0 0 0 0 7.111ZM21.556 20v-1.778a3.555 3.555 0 0 0-2.667-3.44M15.333 4.115a3.556 3.556 0 0 1 0 6.89"
+                        />
+                      </svg>
+                    </div>
+                    <select
+                      id="team"
+                      name="team"
+                      placeholder="Select Team"
+                      className="block w-full bg-[#4F5C6233] rounded-md border-0 py-5 pl-14 pr-12 text-[#40404099] placeholder:text-[#40404099] focus:ring-2 focus:ring-inset focus:[#4F99FF] sm:text-sm sm:leading-6"
+                    >
+                      <option disabled>Select Team</option>
+                      <option value="team_a">Team A</option>
+                      <option value="team_b">Team B</option>
+                    </select>
+                  </div>
                 </div>
 
                 <div className="mt-2">
-                  <input
-                    id="username"
-                    name="username"
-                    type="text"
-                    autoComplete="username"
-                    required
-                    placeholder="Username"
-                    className="block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#4F99FF] sm:text-sm sm:leading-6"
-                  />
+                  <div className="relative mt-2 rounded-md shadow-sm">
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        fill="none"
+                      >
+                        <path
+                          stroke="#2A4365"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M20 21v-2.069c0-1.097-.421-2.15-1.172-2.926A3.933 3.933 0 0 0 16 14.793H8c-1.06 0-2.078.436-2.828 1.212A4.211 4.211 0 0 0 4 18.931v2.07M12 11.276c2.21 0 4-1.853 4-4.138S14.21 3 12 3 8 4.853 8 7.138s1.79 4.138 4 4.138Z"
+                        />
+                      </svg>
+                    </div>
+                    <input
+                      type="text"
+                      name="username"
+                      id="username"
+                      className="block w-full bg-[#4F5C6233] rounded-md border-0 py-5 pl-14 pr-12 text-[#40404099] placeholder:text-[#40404099] focus:ring-2 focus:ring-inset focus:[#4F99FF] sm:text-sm sm:leading-6"
+                      placeholder="Username"
+                      aria-describedby="username"
+                    />
+                  </div>
                 </div>
 
                 <div className="mt-2">
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    placeholder="Email"
-                    className="block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#4F99FF] sm:text-sm sm:leading-6"
-                  />
+                  <div className="relative mt-2 rounded-md shadow-sm">
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                      <svg
+                        className="text-[#2A4365]"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        fill="none"
+                      >
+                        <path
+                          stroke="#2A4365"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2Z"
+                        />
+                        <path
+                          stroke="#2A4365"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="m22 6-10 7L2 6"
+                        />
+                      </svg>
+                    </div>
+                    <input
+                      type="text"
+                      name="email"
+                      id="email"
+                      className="block w-full bg-[#4F5C6233] rounded-md border-0 py-5 pl-14 pr-12 text-[#40404099] placeholder:text-[#40404099] focus:ring-2 focus:ring-inset focus:[#4F99FF] sm:text-sm sm:leading-6"
+                      placeholder="Email"
+                      aria-describedby="email"
+                    />
+                  </div>
                 </div>
 
                 <div className="mt-2">
-                  <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    required
-                    placeholder="Password"
-                    className="block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#4F99FF] sm:text-sm sm:leading-6"
-                  />
+                  <div className="relative mt-2 rounded-md shadow-sm">
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        fill="none"
+                      >
+                        <path
+                          stroke="#2A4365"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M19 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2ZM7 11V7a5 5 0 1 1 10 0v4"
+                        />
+                      </svg>
+                    </div>
+                    <input
+                      type="text"
+                      name="password"
+                      id="password"
+                      className="block w-full bg-[#4F5C6233] rounded-md border-0 py-5 pl-14 pr-12 text-[#40404099] placeholder:text-[#40404099] focus:ring-2 focus:ring-inset focus:ring-[#4F99FF] sm:text-sm sm:leading-6"
+                      placeholder="Password"
+                      aria-describedby="password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => console.log("clicked!")}
+                      className="absolute inset-y-0 right-0 flex items-center pr-4"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        fill="none"
+                      >
+                        <path
+                          fill="#6D8098"
+                          d="M24 12.425v-.572C20.735 7.446 16.75 5.16 12.044 5c-.015 0-.03 0-.046.002C7.133 5.188 3.134 7.492 0 11.913v.572c3.265 4.408 7.25 6.692 11.956 6.853h.042c4.866-.184 8.866-2.489 12.002-6.913Zm-6.835-.256c0 1.416-.505 2.625-1.513 3.627-1.009 1.001-2.226 1.502-3.652 1.502-1.426 0-2.643-.5-3.652-1.502-1.009-1.002-1.513-2.211-1.513-3.627s.504-2.625 1.513-3.626C9.357 7.54 10.574 7.04 12 7.04c1.426 0 2.643.5 3.652 1.503 1.008 1.001 1.513 2.21 1.513 3.626Zm-3.223-1.924a2.652 2.652 0 0 0-1.94-.797c-.757 0-1.404.265-1.94.797a2.615 2.615 0 0 0-.803 1.926c0 .754.268 1.397.804 1.929a2.652 2.652 0 0 0 1.94.798c.757 0 1.403-.266 1.939-.798a2.614 2.614 0 0 0 .806-1.929c0-.752-.269-1.394-.806-1.926Z"
+                        />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
 
                 <div className="mt-2">
-                  <input
-                    id="passwordConfirmation"
-                    name="passwordConfirmation"
-                    type="password"
-                    required
-                    placeholder="Confirm password"
-                    className="block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#4F99FF] sm:text-sm sm:leading-6"
-                  />
+                  <div className="relative mt-2 rounded-md shadow-sm">
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        fill="none"
+                      >
+                        <path
+                          stroke="#2A4365"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M19 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2ZM7 11V7a5 5 0 1 1 10 0v4"
+                        />
+                      </svg>
+                    </div>
+                    <input
+                      type="text"
+                      name="passwordConfirmation"
+                      id="passwordConfirmation"
+                      className="block w-full bg-[#4F5C6233] rounded-md border-0 py-5 pl-14 pr-12 text-[#40404099] placeholder:text-[#40404099] focus:ring-2 focus:ring-inset focus:ring-[#4F99FF] sm:text-sm sm:leading-6"
+                      placeholder="Confirm Password"
+                      aria-describedby="passwordConfirmation"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => console.log("clicked!")}
+                      className="absolute inset-y-0 right-0 flex items-center pr-4"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        fill="none"
+                      >
+                        <path
+                          fill="#6D8098"
+                          d="M24 12.425v-.572C20.735 7.446 16.75 5.16 12.044 5c-.015 0-.03 0-.046.002C7.133 5.188 3.134 7.492 0 11.913v.572c3.265 4.408 7.25 6.692 11.956 6.853h.042c4.866-.184 8.866-2.489 12.002-6.913Zm-6.835-.256c0 1.416-.505 2.625-1.513 3.627-1.009 1.001-2.226 1.502-3.652 1.502-1.426 0-2.643-.5-3.652-1.502-1.009-1.002-1.513-2.211-1.513-3.627s.504-2.625 1.513-3.626C9.357 7.54 10.574 7.04 12 7.04c1.426 0 2.643.5 3.652 1.503 1.008 1.001 1.513 2.21 1.513 3.626Zm-3.223-1.924a2.652 2.652 0 0 0-1.94-.797c-.757 0-1.404.265-1.94.797a2.615 2.615 0 0 0-.803 1.926c0 .754.268 1.397.804 1.929a2.652 2.652 0 0 0 1.94.798c.757 0 1.403-.266 1.939-.798a2.614 2.614 0 0 0 .806-1.929c0-.752-.269-1.394-.806-1.926Z"
+                        />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
 
                 <div className="mt-2">
-                  <input
-                    id="phone"
-                    name="phone"
-                    type="number"
-                    autoComplete="phone"
-                    required
-                    placeholder="Phone number"
-                    className="block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#4F99FF] sm:text-sm sm:leading-6"
-                  />
+                  <div className="relative mt-2 rounded-md shadow-sm">
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        fill="none"
+                      >
+                        <path
+                          fill="#2A4365"
+                          d="m21.165 15.779-1.786-1.786a2.858 2.858 0 0 0-4.008-.017 1.747 1.747 0 0 1-2.215.216 12.198 12.198 0 0 1-3.362-3.354 1.77 1.77 0 0 1 .23-2.224A2.859 2.859 0 0 0 10 4.618L8.214 2.832a2.852 2.852 0 0 0-4.027 0l-.514.515c-2.679 2.678-2.478 8.31 3.095 13.88 3.36 3.362 6.743 4.77 9.486 4.77a6.089 6.089 0 0 0 4.398-1.673l.515-.515a2.852 2.852 0 0 0-.002-4.03Zm-1.148 2.882-.514.515c-2.11 2.11-6.77 1.725-11.589-3.095C3.095 11.26 2.71 6.599 4.82 4.488l.51-.514a1.227 1.227 0 0 1 1.732 0L8.847 5.76a1.227 1.227 0 0 1 .017 1.713 3.394 3.394 0 0 0-.431 4.253 13.807 13.807 0 0 0 3.826 3.82 3.392 3.392 0 0 0 4.246-.42 1.227 1.227 0 0 1 1.72.01l1.785 1.786a1.226 1.226 0 0 1 .007 1.74Z"
+                        />
+                      </svg>
+                    </div>
+                    <input
+                      type="number"
+                      name="phone"
+                      id="phone"
+                      className="block w-full bg-[#4F5C6233] rounded-md border-0 py-5 pl-14 text-[#40404099] placeholder:text-[#40404099] focus:ring-2 focus:ring-inset focus:[#4F99FF] sm:text-sm sm:leading-6"
+                      placeholder="Phone number"
+                      aria-describedby="phone"
+                    />
+                  </div>
                 </div>
 
                 <div className="flex items-center justify-end">
