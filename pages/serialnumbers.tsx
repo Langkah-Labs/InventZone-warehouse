@@ -1,4 +1,4 @@
-import SidebarLayout from "@/components/SidebarLayout";
+import SidebarLayout from "@/components/elements/SideBarLayout";
 import { Raleway } from "next/font/google";
 import { ReactElement } from "react";
 import { SessionAuth } from "supertokens-auth-react/recipe/session";
