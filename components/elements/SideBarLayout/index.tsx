@@ -18,7 +18,7 @@ const navigation = [
   { name: "PRODUCT", href: "/products", icon: CalendarIcon, current: false },
   {
     name: "SERIAL NUMBER",
-    href: "/serialnumbers",
+    href: "/serial-numbers",
     icon: DocumentDuplicateIcon,
     current: false,
   },
