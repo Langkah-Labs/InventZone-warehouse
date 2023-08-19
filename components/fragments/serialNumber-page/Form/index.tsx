@@ -1,4 +1,6 @@
+import React from "react";
 import Link from "next/link";
+import InputField from "@/components/elements/Form/InputField";
 
 export default function index() {
   return (
@@ -14,56 +16,21 @@ export default function index() {
           </p>
 
           <div className="mt-10 space-y-8 border-b border-gray-900/10 pb-12 sm:space-y-0 sm:divide-y sm:divide-gray-900/10 sm:border-t sm:pb-0">
-            <div className="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
-              <label
-                htmlFor="product-name"
-                className="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5"
-              >
-                No. PO <span className="text-[#C23A3A]">*</span>
-              </label>
-              <div className="mt-2 sm:col-span-2 sm:mt-0">
-                <input
-                  type="text"
-                  name="product-name"
-                  id="product-name"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                />
-              </div>
-            </div>
+            <InputField
+              id="no-po"
+              name="no-po"
+              label="No. PO"
+              isRequired={true}
+            />
 
-            <div className="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
-              <label
-                htmlFor="product-name"
-                className="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5"
-              >
-                Product Name <span className="text-[#C23A3A]">*</span>
-              </label>
-              <div className="mt-2 sm:col-span-2 sm:mt-0">
-                <input
-                  type="text"
-                  name="product-name"
-                  id="product-name"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                />
-              </div>
-            </div>
+            <InputField
+              id="product-name"
+              name="product-name"
+              label="Product Name"
+              isRequired={true}
+            />
 
-            <div className="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
-              <label
-                htmlFor="product-name"
-                className="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5"
-              >
-                Qty. <span className="text-[#C23A3A]">*</span>
-              </label>
-              <div className="mt-2 sm:col-span-2 sm:mt-0">
-                <input
-                  type="text"
-                  name="product-name"
-                  id="product-name"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                />
-              </div>
-            </div>
+            <InputField id="qty" name="qty" label="Qty." isRequired={true} />
           </div>
           <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-600">
             <b>Note:&nbsp;</b>(<span className="text-[#C23A3A]">*</span>) is
