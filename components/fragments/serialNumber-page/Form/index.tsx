@@ -1,6 +1,5 @@
 import React from "react";
 import Link from "next/link";
-import TextArea from "@/components/elements/Form/TextArea";
 import InputField from "@/components/elements/Form/InputField";
 
 export default function index() {
@@ -8,12 +7,22 @@ export default function index() {
     <form>
       <div className="space-y-12 sm:space-y-16">
         <div>
-          <h2 className="body-4large-bold leading-7 text-[#113A5D]">Product</h2>
+          <h2 className="body-4large-bold leading-7 text-[#113A5D]">
+            Serial Number
+          </h2>
           <p className="mt-2 max-w-2xl leading-6 body-base-regular text-gray-400">
-            This information will be added as a new product in the system.
+            This information will be added as a new serial number data in the
+            system.
           </p>
 
           <div className="mt-10 space-y-8 border-b border-gray-900/10 pb-12 sm:space-y-0 sm:divide-y sm:divide-gray-900/10 sm:border-t sm:pb-0">
+            <InputField
+              id="no-po"
+              name="no-po"
+              label="No. PO"
+              isRequired={true}
+            />
+
             <InputField
               id="product-name"
               name="product-name"
@@ -21,12 +30,7 @@ export default function index() {
               isRequired={true}
             />
 
-            <TextArea
-              id="description"
-              name="description"
-              label="Description"
-              placeholder="Write a few sentences about the product."
-            />
+            <InputField id="qty" name="qty" label="Qty." isRequired={true} />
           </div>
           <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-600">
             <b>Note:&nbsp;</b>(<span className="text-[#C23A3A]">*</span>) is
@@ -37,7 +41,7 @@ export default function index() {
 
       <div className="mt-6 flex items-center justify-end gap-x-6">
         <Link
-          href="/products"
+          href="/serial-numbers"
           className="text-sm font-semibold leading-6 text-gray-900"
         >
           Cancel
