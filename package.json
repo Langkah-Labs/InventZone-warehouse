@@ -12,6 +12,7 @@
     "@headlessui/react": "^1.7.16",
     "@heroicons/react": "^2.0.18",
     "@tanstack/query-core": "^4.33.0",
+    "@tanstack/react-query-devtools": "^4.33.0",
     "autoprefixer": "10.4.15",
     "echarts": "^5.4.3",
     "eslint": "8.47.0",
