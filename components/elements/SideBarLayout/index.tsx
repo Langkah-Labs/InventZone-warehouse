@@ -9,6 +9,7 @@ import {
   XMarkIcon,
   DocumentDuplicateIcon,
   Cog6ToothIcon,
+  BookmarkSquareIcon,
 } from "@heroicons/react/24/outline";
 import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { Disclosure } from "@headlessui/react";
@@ -20,6 +21,12 @@ const navigation = [
     name: "SERIAL NUMBER",
     href: "/serial-numbers",
     icon: DocumentDuplicateIcon,
+    current: false,
+  },
+  {
+    name: "PRODUCT SERIALS",
+    href: "/product-serials",
+    icon: BookmarkSquareIcon,
     current: false,
   },
   {
