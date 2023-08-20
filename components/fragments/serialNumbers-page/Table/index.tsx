@@ -1,11 +1,16 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import ConfirmAlert from "@/components/elements/Modals/ConfirmationAlert";
+import InfoAlert from "@/components/elements/Modals/InfoAlert";
 
 export default function Index() {
-  const [isClicked, setIsClicked] = useState(false);
-  const clickHandler = () => {
-    setIsClicked(!isClicked);
+  const [isClickedVerification, setIsClickedVerification] = useState(false);
+  const [isClickedGenerate, setIsClickedGenerate] = useState(false);
+  const clickVerificationHandler = () => {
+    setIsClickedVerification(!isClickedVerification);
+  };
+  const clickGenerateHandler = () => {
+    setIsClickedGenerate(!isClickedGenerate);
   };
   const serialNumbers = [
     {
@@ -119,7 +124,7 @@ export default function Index() {
                       </a>
                       <div
                         className="cursor-pointer inline-flex items-center gap-x-1.5 ml-2 rounded-md bg-[#129483ff] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                        onClick={() => clickHandler()}
+                        onClick={() => clickVerificationHandler()}
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -136,9 +141,9 @@ export default function Index() {
                           />
                         </svg>
                       </div>
-                      <a
-                        href="#"
-                        className="inline-flex items-center gap-x-1.5 ml-2 rounded-md bg-[#718096ff] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                      <div
+                        className="cursor-pointer inline-flex items-center gap-x-1.5 ml-2 rounded-md bg-[#718096ff] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        onClick={() => clickGenerateHandler()}
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -154,7 +159,7 @@ export default function Index() {
                             d="M6 6.878V6a2.25 2.25 0 012.25-2.25h7.5A2.25 2.25 0 0118 6v.878m-12 0c.235-.083.487-.128.75-.128h10.5c.263 0 .515.045.75.128m-12 0A2.25 2.25 0 004.5 9v.878m13.5-3A2.25 2.25 0 0119.5 9v.878m0 0a2.246 2.246 0 00-.75-.128H5.25c-.263 0-.515.045-.75.128m15 0A2.25 2.25 0 0121 12v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6c0-.98.626-1.813 1.5-2.122"
                           />
                         </svg>
-                      </a>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -163,12 +168,23 @@ export default function Index() {
           </div>
         </div>
       </div>
-      {isClicked ? (
+      {isClickedVerification ? (
         <ConfirmAlert
           title="Data Verification"
           description="If you verified the data, your verification will be sent to vendor and the data status will be verified"
           labelAccept="Yes,I want to verified"
           labelReject="No, maybe later"
+        />
+      ) : (
+        <></>
+      )}
+      {isClickedGenerate ? (
+        <InfoAlert
+          title="Generate Serial Number"
+          description="Your serial number has been generated!"
+          labelAction1="Share to email"
+          labelAction2="Download File"
+          labelReject="Back"
         />
       ) : (
         <></>
