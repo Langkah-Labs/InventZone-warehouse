@@ -3,4 +3,5 @@ export interface Props {
   name?: string;
   placeholder?: string;
   isSearch?: boolean;
+  isMail?: boolean;
 }

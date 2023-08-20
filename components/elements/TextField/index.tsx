@@ -1,11 +1,18 @@
 import type { Props } from "./type";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon, EnvelopeIcon } from "@heroicons/react/24/outline";
 
-export default function Index({ label, name, placeholder, isSearch }: Props) {
+export default function Index({
+  label,
+  name,
+  placeholder,
+  isSearch,
+  isMail,
+}: Props) {
   return (
     <div className="relative rounded-md shadow-sm">
       <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
         {isSearch ?? <MagnifyingGlassIcon />}
+        {isMail ?? <EnvelopeIcon />}
       </div>
       <input
         type="text"

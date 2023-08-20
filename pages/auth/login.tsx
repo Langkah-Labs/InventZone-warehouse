@@ -214,12 +214,12 @@ export default function Login() {
 
                 <div className="flex items-center justify-between">
                   <div className="text-sm leading-6">
-                    <a
-                      href="#"
+                    <Link
+                      href="/users/forgot-password"
                       className="font-semibold text-[#4F99FF] hover:underline"
                     >
                       Forgot password?
-                    </a>
+                    </Link>
                   </div>
 
                   <button
