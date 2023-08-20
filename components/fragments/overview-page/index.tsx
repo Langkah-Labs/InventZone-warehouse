@@ -33,7 +33,6 @@ export default function index() {
           <DropdownList
             id="periode"
             name="periode"
-            label="Periode"
             listValues={period}
           />
         </div>

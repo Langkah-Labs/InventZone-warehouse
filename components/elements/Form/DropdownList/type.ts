@@ -9,4 +9,5 @@ export interface Props {
   name?: string;
   placeholder?: string;
   listValues?: Array<valuesType>;
+  isRequired?: boolean;
 }

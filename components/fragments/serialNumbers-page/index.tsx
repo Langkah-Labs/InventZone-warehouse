@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import TextField from "@/components/elements/TextField";
-import Table from "@/components/fragments/serialNumber-page/Table";
+import Table from "@/components/fragments/serialNumbers-page/Table";
 
 export default function index() {
   return (
