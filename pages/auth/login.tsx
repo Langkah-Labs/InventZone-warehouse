@@ -1,10 +1,78 @@
 import Link from "next/link";
+import { useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { signIn } from "supertokens-web-js/recipe/emailpassword";
 
 import { Raleway } from "next/font/google";
 
 const raleway = Raleway({ subsets: ["latin"] });
 
+type LoginInput = {
+  email: string;
+  password: string;
+};
+
 export default function Login() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginInput>();
+
+  const [passwordVisibility, setPasswordVisibility] = useState({
+    password: false,
+  });
+
+  const onSubmit: SubmitHandler<LoginInput> = async (data) => {
+    try {
+      let response = await signIn({
+        formFields: [
+          {
+            id: "email",
+            value: data.email,
+          },
+          {
+            id: "password",
+            value: data.password,
+          },
+        ],
+      });
+
+      if (response.status === "FIELD_ERROR") {
+        response.formFields.forEach((formField) => {
+          if (formField.id === "email") {
+            // Email validation failed (for example incorrect email syntax).
+            window.alert(formField.error);
+          }
+        });
+      } else if (response.status === "WRONG_CREDENTIALS_ERROR") {
+        window.alert("Email password combination is incorrect.");
+      } else {
+        // sign in successful. The session tokens are automatically handled by
+        // the frontend SDK.
+        window.location.href = "/";
+      }
+    } catch (err: any) {
+      if (err.isSuperTokensGeneralError === true) {
+        // this may be a custom error message sent from the API by you.
+        window.alert(err.message);
+      } else {
+        window.alert("Oops! Something went wrong.");
+      }
+    }
+  };
+
+  const showPassword = (name: string) => {
+    setPasswordVisibility((prevVal: any) => {
+      return {
+        ...prevVal,
+        [name]: !prevVal[name],
+      };
+    });
+  };
+
+  const protectedPassword = (hidden: any) => (hidden ? "text" : "password");
+
   return (
     <div className={`flex min-h-full flex-1 ${raleway.className}`}>
       <div
@@ -60,7 +128,7 @@ export default function Login() {
 
           <div className="mt-10">
             <div>
-              <form action="#" method="POST" className="space-y-6">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div className="mt-2">
                   <div className="relative mt-2 rounded-md shadow-sm">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
@@ -89,11 +157,11 @@ export default function Login() {
                     </div>
                     <input
                       type="text"
-                      name="email"
                       id="email"
                       className="block w-full bg-[#4F5C6233] rounded-md border-0 py-5 pl-14 pr-12 text-[#40404099] placeholder:text-[#40404099] focus:ring-2 focus:ring-inset focus:[#4F99FF] sm:text-sm sm:leading-6"
                       placeholder="you@example.com"
                       aria-describedby="email"
+                      {...register("email")}
                     />
                   </div>
                 </div>
@@ -117,16 +185,16 @@ export default function Login() {
                       </svg>
                     </div>
                     <input
-                      type="text"
-                      name="password"
+                      type={protectedPassword(passwordVisibility.password)}
                       id="password"
                       className="block w-full bg-[#4F5C6233] rounded-md border-0 py-5 pl-14 pr-12 text-[#40404099] placeholder:text-[#40404099] focus:ring-2 focus:ring-inset focus:ring-[#4F99FF] sm:text-sm sm:leading-6"
                       placeholder="at least 8 characters"
                       aria-describedby="password"
+                      {...register("password")}
                     />
                     <button
                       type="button"
-                      onClick={() => console.log("clicked!")}
+                      onClick={() => showPassword("password")}
                       className="absolute inset-y-0 right-0 flex items-center pr-4"
                     >
                       <svg
