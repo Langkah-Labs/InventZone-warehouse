@@ -2,15 +2,20 @@ import React, { useState } from "react";
 import Link from "next/link";
 import ConfirmAlert from "@/components/elements/Modals/ConfirmationAlert";
 import InfoAlert from "@/components/elements/Modals/InfoAlert";
+import SuccessAlert from "@/components/elements/Modals/SuccessAlert";
 
 export default function Index() {
   const [isClickedVerification, setIsClickedVerification] = useState(false);
   const [isClickedGenerate, setIsClickedGenerate] = useState(false);
+  const [isClickedSuccess, setIsClickedSuccess] = useState(false);
   const clickVerificationHandler = () => {
     setIsClickedVerification(!isClickedVerification);
   };
   const clickGenerateHandler = () => {
     setIsClickedGenerate(!isClickedGenerate);
+  };
+  const clickSuccessHandler = () => {
+    setIsClickedSuccess(!isClickedSuccess);
   };
   const serialNumbers = [
     {
@@ -184,6 +189,17 @@ export default function Index() {
           description="Your serial number has been generated!"
           labelAction1="Share to email"
           labelAction2="Download File"
+          labelReject="Back"
+          actionHandler1={clickSuccessHandler}
+          actionHandler2={clickSuccessHandler}
+        />
+      ) : (
+        <></>
+      )}
+      {isClickedSuccess ? (
+        <SuccessAlert
+          title="Success!"
+          description="You got your own serial number!"
           labelReject="Back"
         />
       ) : (

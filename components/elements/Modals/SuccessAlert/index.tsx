@@ -1,30 +1,16 @@
 import React, { Fragment, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { InformationCircleIcon } from "@heroicons/react/24/outline";
+import { CheckIcon } from "@heroicons/react/24/outline";
 import { Props } from "./type";
 
 export default function Index({
   title,
   description,
-  labelAction1,
-  actionHandler1,
-  labelAction2,
-  actionHandler2,
   labelReject,
 }: Props) {
   const [open, setOpen] = useState(true);
 
   const cancelButtonRef = useRef(null);
-
-  const action1Handler = () => {
-    setOpen(false);
-    actionHandler1();
-  };
-
-  const action2Handler = () => {
-    setOpen(false);
-    actionHandler2();
-  };
 
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -59,9 +45,9 @@ export default function Index({
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
                 <div>
-                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
-                    <InformationCircleIcon
-                      className="h-6 w-6 text-gray-600"
+                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+                    <CheckIcon
+                      className="h-6 w-6 text-green-600"
                       aria-hidden="true"
                     />
                   </div>
@@ -85,20 +71,6 @@ export default function Index({
                     ref={cancelButtonRef}
                   >
                     {labelReject}
-                  </button>
-                  <button
-                    type="button"
-                    className="inline-flex w-full justify-center rounded-md bg-yellow-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
-                    onClick={() => action1Handler()}
-                  >
-                    {labelAction1}
-                  </button>
-                  <button
-                    type="button"
-                    className="inline-flex w-full justify-center rounded-md bg-[#129483ff] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
-                    onClick={() => action2Handler()}
-                  >
-                    {labelAction2}
                   </button>
                 </div>
               </Dialog.Panel>
