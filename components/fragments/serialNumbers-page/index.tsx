@@ -18,7 +18,7 @@ export default function index() {
         </div>
         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex items-center gap-2">
           <div>
-            <TextField label="search" name="search" placeholder="Search..." />
+            <TextField label="search" name="search" placeholder="Search..." isSearch={true} />
           </div>
           <Link
             href="/serial-numbers/form"
