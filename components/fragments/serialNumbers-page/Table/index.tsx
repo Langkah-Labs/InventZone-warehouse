@@ -2,17 +2,22 @@ import React, { useState } from "react";
 import Link from "next/link";
 import ConfirmAlert from "@/components/elements/Modals/ConfirmationAlert";
 import InfoAlert from "@/components/elements/Modals/InfoAlert";
+import FormAlert from "@/components/elements/Modals/FormAlert";
 import SuccessAlert from "@/components/elements/Modals/SuccessAlert";
 
 export default function Index() {
   const [isClickedVerification, setIsClickedVerification] = useState(false);
   const [isClickedGenerate, setIsClickedGenerate] = useState(false);
+  const [isClickedEmail, setIsClickedEmail] = useState(false);
   const [isClickedSuccess, setIsClickedSuccess] = useState(false);
   const clickVerificationHandler = () => {
     setIsClickedVerification(!isClickedVerification);
   };
   const clickGenerateHandler = () => {
     setIsClickedGenerate(!isClickedGenerate);
+  };
+  const clickEmailHandler = () => {
+    setIsClickedEmail(!isClickedEmail);
   };
   const clickSuccessHandler = () => {
     setIsClickedSuccess(!isClickedSuccess);
@@ -190,8 +195,19 @@ export default function Index() {
           labelAction1="Share to email"
           labelAction2="Download File"
           labelReject="Back"
-          actionHandler1={clickSuccessHandler}
+          actionHandler1={clickEmailHandler}
           actionHandler2={clickSuccessHandler}
+        />
+      ) : (
+        <></>
+      )}
+      {isClickedEmail ? (
+        <FormAlert
+          title="Share to email"
+          description="Enter email to send the serial number file"
+          labelAction="Send email"
+          labelReject="Back"
+          actionHandler1={clickSuccessHandler}
         />
       ) : (
         <></>
