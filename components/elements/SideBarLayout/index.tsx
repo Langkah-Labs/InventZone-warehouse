@@ -10,6 +10,7 @@ import {
   DocumentDuplicateIcon,
   Cog6ToothIcon,
   BookmarkSquareIcon,
+  ArrowRightOnRectangleIcon,
 } from "@heroicons/react/24/outline";
 import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { Disclosure } from "@headlessui/react";
@@ -124,8 +125,8 @@ export default function SidebarLayout({ children }: any) {
                         <path
                           fill="#113A5D"
                           stroke="#113A5D"
-                          stroke-linecap="square"
-                          stroke-linejoin="round"
+                          strokeLinecap="square"
+                          strokeLinejoin="round"
                           d="M110.414 15.137V2.912h8.468V4.35h-6.914v3.743h6.477V9.53h-6.477v4.17h7.187v1.437h-8.741Zm-11.878 0V2.912h1.596l6.15 9.592V2.912h1.486v12.225h-1.582l-6.163-9.606v9.606h-1.487ZM85.377 9.188c0-2.03.523-3.62 1.568-4.767 1.046-1.148 2.391-1.722 4.037-1.722 1.082 0 2.059.27 2.932.81.863.532 1.527 1.282 1.99 2.25.446.967.669 2.063.669 3.287 0 1.233-.237 2.338-.71 3.316-.481.986-1.163 1.731-2.045 2.234a5.585 5.585 0 0 1-2.836.754c-1.11 0-2.096-.28-2.96-.84a5.301 5.301 0 0 1-1.977-2.277 7.14 7.14 0 0 1-.668-3.045Zm1.596.014c0 1.48.382 2.643 1.145 3.487.755.844 1.705 1.266 2.85 1.266 1.164 0 2.127-.427 2.891-1.28.746-.854 1.118-2.069 1.118-3.644 0-.996-.159-1.864-.477-2.604-.327-.74-.8-1.314-1.418-1.722a3.704 3.704 0 0 0-2.087-.612c-1.1 0-2.04.394-2.822 1.181-.8.778-1.2 2.088-1.2 3.928Zm-12.055 5.935v-1.495l6-7.841a23.64 23.64 0 0 1 1.214-1.452H75.6V2.912h8.386V4.35l-7.282 9.35h7.473v1.438h-9.259Zm-6.082 0V4.349h-3.859V2.912h9.287V4.35H70.39v10.788h-1.555Zm-48.463 0V2.912h1.595l6.15 9.592V2.912h1.487v12.225h-1.582L21.859 5.53v9.606h-1.486Zm-4.255 0V2.912h1.555v12.225h-1.555Zm37.896 0V2.912h1.595l6.15 9.592V2.912h1.486v12.225h-1.581L55.5 5.53v9.606h-1.486Zm-10.855 0V2.912h8.468V4.35h-6.913v3.743h6.477V9.53h-6.477v4.17H51.9v1.437h-8.74Zm-7.595 0L31.023 2.912H32.7l3.054 8.88c.246.712.45 1.38.614 2.007.182-.674.391-1.343.627-2.007l3.164-8.88h1.582l-4.582 12.225h-1.595Z"
                         />
                         <path
@@ -134,16 +135,16 @@ export default function SidebarLayout({ children }: any) {
                         />
                         <path
                           stroke="#fff"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width=".5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth=".5"
                           d="M11.036 14.16c.828-.048 1.241-.522 1.241-1.424V2.191c0-.949-.454-1.423-1.363-1.423H1v13.391"
                         />
                         <path
                           stroke="#fff"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width=".5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth=".5"
                           d="m5.786 15.696-4.772-1.522V.781l8.809 2.804c.809.256 1.213.858 1.213 1.807v10.546c0 .948-.404 1.294-1.213 1.038l-4.037-1.28Zm0 0V3.415M3.21 2.76v11.983m5.073-10.63v12.224"
                         />
                       </svg>
@@ -236,7 +237,7 @@ export default function SidebarLayout({ children }: any) {
                             href="#"
                             className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-indigo-600"
                           >
-                            <Cog6ToothIcon
+                            <ArrowRightOnRectangleIcon
                               className="h-6 w-6 shrink-0 text-gray-400 group-hover:text-indigo-600"
                               aria-hidden="true"
                             />
@@ -270,8 +271,8 @@ export default function SidebarLayout({ children }: any) {
                 <path
                   fill="#113A5D"
                   stroke="#113A5D"
-                  stroke-linecap="square"
-                  stroke-linejoin="round"
+                  strokeLinecap="square"
+                  strokeLinejoin="round"
                   d="M110.414 15.137V2.912h8.468V4.35h-6.914v3.743h6.477V9.53h-6.477v4.17h7.187v1.437h-8.741Zm-11.878 0V2.912h1.596l6.15 9.592V2.912h1.486v12.225h-1.582l-6.163-9.606v9.606h-1.487ZM85.377 9.188c0-2.03.523-3.62 1.568-4.767 1.046-1.148 2.391-1.722 4.037-1.722 1.082 0 2.059.27 2.932.81.863.532 1.527 1.282 1.99 2.25.446.967.669 2.063.669 3.287 0 1.233-.237 2.338-.71 3.316-.481.986-1.163 1.731-2.045 2.234a5.585 5.585 0 0 1-2.836.754c-1.11 0-2.096-.28-2.96-.84a5.301 5.301 0 0 1-1.977-2.277 7.14 7.14 0 0 1-.668-3.045Zm1.596.014c0 1.48.382 2.643 1.145 3.487.755.844 1.705 1.266 2.85 1.266 1.164 0 2.127-.427 2.891-1.28.746-.854 1.118-2.069 1.118-3.644 0-.996-.159-1.864-.477-2.604-.327-.74-.8-1.314-1.418-1.722a3.704 3.704 0 0 0-2.087-.612c-1.1 0-2.04.394-2.822 1.181-.8.778-1.2 2.088-1.2 3.928Zm-12.055 5.935v-1.495l6-7.841a23.64 23.64 0 0 1 1.214-1.452H75.6V2.912h8.386V4.35l-7.282 9.35h7.473v1.438h-9.259Zm-6.082 0V4.349h-3.859V2.912h9.287V4.35H70.39v10.788h-1.555Zm-48.463 0V2.912h1.595l6.15 9.592V2.912h1.487v12.225h-1.582L21.859 5.53v9.606h-1.486Zm-4.255 0V2.912h1.555v12.225h-1.555Zm37.896 0V2.912h1.595l6.15 9.592V2.912h1.486v12.225h-1.581L55.5 5.53v9.606h-1.486Zm-10.855 0V2.912h8.468V4.35h-6.913v3.743h6.477V9.53h-6.477v4.17H51.9v1.437h-8.74Zm-7.595 0L31.023 2.912H32.7l3.054 8.88c.246.712.45 1.38.614 2.007.182-.674.391-1.343.627-2.007l3.164-8.88h1.582l-4.582 12.225h-1.595Z"
                 />
                 <path
@@ -280,16 +281,16 @@ export default function SidebarLayout({ children }: any) {
                 />
                 <path
                   stroke="#fff"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width=".5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth=".5"
                   d="M11.036 14.16c.828-.048 1.241-.522 1.241-1.424V2.191c0-.949-.454-1.423-1.363-1.423H1v13.391"
                 />
                 <path
                   stroke="#fff"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width=".5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth=".5"
                   d="m5.786 15.696-4.772-1.522V.781l8.809 2.804c.809.256 1.213.858 1.213 1.807v10.546c0 .948-.404 1.294-1.213 1.038l-4.037-1.28Zm0 0V3.415M3.21 2.76v11.983m5.073-10.63v12.224"
                 />
               </svg>
@@ -375,10 +376,10 @@ export default function SidebarLayout({ children }: any) {
                 <li className="mt-auto">
                   <a
                     href="#"
-                    className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-indigo-600"
+                    className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-red-400 hover:bg-red-50 hover:text-red-600"
                   >
-                    <Cog6ToothIcon
-                      className="h-6 w-6 shrink-0 text-gray-400 group-hover:text-indigo-600"
+                    <ArrowRightOnRectangleIcon
+                      className="h-6 w-6 shrink-0 text-red-400 group-hover:text-red-600"
                       aria-hidden="true"
                     />
                     LOG OUT
