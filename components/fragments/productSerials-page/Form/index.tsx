@@ -41,6 +41,22 @@ export default function index() {
               isRequired={true}
             />
 
+            <InputField
+              id="capacity"
+              name="capacity"
+              label="Capacity"
+              hint="Please fill this field if the product is ODP."
+              isRequired={false}
+            />
+
+            <InputField
+              id="optical-power"
+              name="optical-power"
+              label="Optical Power"
+              hint="Please fill this field if the product is ODP."
+              isRequired={false}
+            />
+
             <TextArea
               id="description"
               name="description"
