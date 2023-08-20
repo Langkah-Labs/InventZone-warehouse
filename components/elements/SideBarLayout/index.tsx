@@ -42,10 +42,7 @@ const navigation = [
   },
 ];
 
-const userNavigation = [
-  { name: "Your profile", href: "#" },
-  { name: "Sign out", href: "#" },
-];
+const userNavigation = [{ name: "Your profile", href: "/users/your-profile" }];
 
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
