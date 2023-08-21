@@ -1,25 +1,11 @@
 import React from "react";
 import Link from "next/link";
+import { useAtom } from "jotai";
+import { productsAtom } from "@/atoms/products";
 
-export default function index() {
-  const product = [
-    {
-      name: "Optical Distribution Point",
-    },
-    {
-      name: "Indoor Cable",
-    },
-    {
-      name: "Optical Network Terminal",
-    },
-    {
-      name: "Optical Termination Premises",
-    },
-    {
-      name: "Set Top Box",
-    },
-    // More product...
-  ];
+export default function Index() {
+  const [result] = useAtom(productsAtom);
+  const data = result as any;
 
   function classNames(...classes: any) {
     return classes.filter(Boolean).join(" ");
@@ -46,21 +32,21 @@ export default function index() {
               </tr>
             </thead>
             <tbody>
-              {product.map((person, personIdx) => (
-                <tr key={person.name}>
+              {data?.products.map((product: any, productIdx: number) => (
+                <tr key={product.id}>
                   <td
                     className={classNames(
-                      personIdx !== product.length - 1
+                      productIdx !== product.length - 1
                         ? "border-b border-gray-200"
                         : "",
                       "whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 lg:pl-8"
                     )}
                   >
-                    {person.name}
+                    {product.name}
                   </td>
                   <td
                     className={classNames(
-                      personIdx !== product.length - 1
+                      productIdx !== product.length - 1
                         ? "border-b border-gray-200"
                         : "",
                       "relative whitespace-nowrap py-4 pr-4 pl-3 text-right text-sm font-medium sm:pr-8 lg:pr-8"
