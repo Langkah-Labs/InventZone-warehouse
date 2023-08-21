@@ -1,12 +1,12 @@
 import "@/styles/globals.css";
-import { useEffect } from "react";
+import { useEffect, useState, ReactElement, ReactNode } from "react";
 import type { AppProps } from "next/app";
 import type { NextPage } from "next";
 import SuperTokensWebJs from "supertokens-web-js";
 import Session from "supertokens-web-js/recipe/session";
 
 import { frontendConfig } from "@/config/frontendConfig";
-import { ReactElement, ReactNode } from "react";
+import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -22,6 +22,8 @@ if (typeof window !== "undefined") {
 
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
+
+  const [queryClient] = useState(() => new QueryClient());
 
   useEffect(() => {
     async function doRefresh() {
@@ -57,5 +59,11 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
     return null;
   }
 
-  return getLayout(<Component {...pageProps} />);
+  return getLayout(
+    <QueryClientProvider client={queryClient}>
+      <Hydrate state={pageProps.dehydratedState}>
+        <Component {...pageProps} />
+      </Hydrate>
+    </QueryClientProvider>
+  );
 }

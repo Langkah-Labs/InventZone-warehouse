@@ -3,7 +3,7 @@ import Link from "next/link";
 import TextField from "@/components/elements/TextField";
 import Table from "@/components/fragments/products-page/Table";
 
-export default function index() {
+export default function Index() {
   return (
     <div className="px-4 sm:px-6 lg:px-8">
       <div className="sm:flex sm:items-center">
@@ -19,7 +19,12 @@ export default function index() {
         </div>
         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex items-center gap-2">
           <div>
-            <TextField label="search" name="search" placeholder="Search..." isSearch={true} />
+            <TextField
+              label="search"
+              name="search"
+              placeholder="Search..."
+              isSearch={true}
+            />
           </div>
           <Link
             href="/products/form"
