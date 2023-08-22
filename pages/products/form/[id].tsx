@@ -6,7 +6,8 @@ import type { NextPageWithLayout } from "../../_app";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { graphqlRequest } from "@/utils/graphql";
 import { useRouter } from "next/router";
-import { ProductInput } from "@/types/product";
+import { GetServerSideProps } from "next";
+import { Product, ProductInput } from "@/types/product";
 
 const raleway = Raleway({ subsets: ["latin"] });
 
@@ -22,7 +23,61 @@ const insertProductMutation = `
   }
 `;
 
-const Products: NextPageWithLayout = () => {
+const findProductByIdQuery = `
+  query FindProductByIdQuery($id: bigint!) {
+    products_by_pk(id: $id) {
+      created_at
+      description
+      id
+      name
+      updated_at
+    }
+  }
+`;
+
+const updateProductByIdMutation = `
+  mutation UpdateProductById($id: bigint!, $name: String!, $description: String!) {
+    update_products_by_pk(pk_columns: {id: $id}, _set: {name: $name, description: $description}) {
+      id
+      name
+      description
+      created_at
+      updated_at
+    }
+  }
+`;
+
+type PageProps = {
+  product?: Product;
+};
+
+export const getServerSideProps: GetServerSideProps<PageProps> = async (
+  ctx
+) => {
+  const { id } = ctx.query;
+
+  try {
+    const result = await graphqlRequest.request<any>(findProductByIdQuery, {
+      id,
+    });
+
+    return {
+      props: {
+        product: result["products_by_pk"],
+      },
+    };
+  } catch (err) {
+    console.error(err);
+
+    return {
+      props: {
+        product: {},
+      },
+    };
+  }
+};
+
+const Products: NextPageWithLayout<PageProps> = ({ product }) => {
   const router = useRouter();
   const {
     register,
@@ -31,12 +86,25 @@ const Products: NextPageWithLayout = () => {
   } = useForm<ProductInput>();
 
   const onSubmit: SubmitHandler<ProductInput> = async (data) => {
+    console.log(data);
+
     if (!router.isReady) return;
 
-    try {
-      await graphqlRequest.request(insertProductMutation, data);
+    const { id } = router.query;
 
-      router.push("/products");
+    try {
+      if (id) {
+        await graphqlRequest.request(updateProductByIdMutation, {
+          ...data,
+          id,
+        });
+      } else {
+        await graphqlRequest.request(insertProductMutation, data);
+      }
+
+      if (router.isReady) {
+        router.push("/products");
+      }
     } catch (err) {
       console.error(err);
     }
@@ -68,7 +136,7 @@ const Products: NextPageWithLayout = () => {
                     type="text"
                     id="name"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                    defaultValue={""}
+                    defaultValue={product?.name ?? ""}
                     {...register("name")}
                   />
                   {/* <p className="mt-3 text-sm leading-6 text-gray-600">{hint}</p> */}
@@ -87,7 +155,7 @@ const Products: NextPageWithLayout = () => {
                     id="description"
                     rows={3}
                     className="block w-full max-w-2xl rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    defaultValue={""}
+                    defaultValue={product?.description ?? ""}
                     {...register("description")}
                   />
                   <p className="mt-3 text-sm leading-6 text-gray-600">
