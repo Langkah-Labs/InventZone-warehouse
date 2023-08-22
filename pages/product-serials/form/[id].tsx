@@ -9,6 +9,7 @@ import SidebarLayout from "@/components/elements/SideBarLayout";
 import { ProductSerialsInput } from "@/types/productSerials";
 import { GetServerSideProps } from "next";
 import { Product } from "@/types/product";
+import { ProductSerials } from "@/types/productSerials";
 
 const raleway = Raleway({ subsets: ["latin"] });
 
@@ -23,8 +24,8 @@ const findAllProductsQuery = `
   }
 `;
 
-const insertProductSerialMutation = `
-  mutation InsertProductSerialsMutation($serial_number: String!, $product_id: bigint!, $capacity: bigint!, $optical_power: String!, $description: String!) {
+const insertProductSerialsMutation = `
+  mutation InsertProductSerialsMutation($serial_number: String!, $product_id: bigint!, $capacity: bigint, $optical_power: String, $description: String) {
     insert_product_serials(objects: {serial_number: $serial_number, product_id: $product_id, capacity: $capacity, optical_power: $optical_power, description: $description}) {
       affected_rows
       returning {
@@ -41,17 +42,59 @@ const insertProductSerialMutation = `
   }
 `;
 
+const findProductSerialsByIdQuery = `
+  query FindProductSerialsByIdQuery($id: bigint!) {
+    product_serials_by_pk(id: $id) {
+        created_at
+        description
+        id
+        updated_at
+        capacity
+        optical_power
+        product_id
+        serial_number
+    }
+  }
+`;
+
+const updateProductSerialsByIdMutation = `
+  mutation UpdateProducSerialstById($id: bigint!, $serial_number: String!, $product_id: bigint!, $capacity: bigint, $optical_power: String, $description: String) {
+    update_product_serials_by_pk(pk_columns: {id: $id}, _set: {serial_number: $serial_number, product_id: $product_id, capacity: $capacity, optical_power: $optical_power, description: $description}) {
+        capacity
+        id
+        product_id
+        optical_power
+        serial_number
+        description
+        created_at
+        updated_at
+    }
+  }
+`;
+
 type PageProps = {
   products?: Array<Product>;
+  productSelected?: ProductSerials;
 };
 
-export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
+export const getServerSideProps: GetServerSideProps<PageProps> = async (
+  ctx
+) => {
+  const { id } = ctx.query;
   try {
     const result = await graphqlRequest.request<any>(findAllProductsQuery, {});
+
+    const resultSelected = await graphqlRequest.request<any>(
+      findProductSerialsByIdQuery,
+      {
+        id,
+      }
+    );
 
     return {
       props: {
         products: result["products"],
+        productSelected: resultSelected["product_serials_by_pk"],
       },
     };
   } catch (err) {
@@ -65,21 +108,38 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
   }
 };
 
-const SerialProducts: NextPageWithLayout<PageProps> = ({ products }) => {
+const SerialProducts: NextPageWithLayout<PageProps> = ({
+  products,
+  productSelected,
+}) => {
   const router = useRouter();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<ProductSerialsInput>();
+  console.log(productSelected);
 
   const onSubmit: SubmitHandler<ProductSerialsInput> = async (data) => {
+    console.log(data);
+
     if (!router.isReady) return;
 
-    try {
-      await graphqlRequest.request(insertProductSerialMutation, data);
+    const { id } = router.query;
 
-      router.push("/product-serials");
+    try {
+      if (id) {
+        await graphqlRequest.request(updateProductSerialsByIdMutation, {
+          ...data,
+          id,
+        });
+      } else {
+        await graphqlRequest.request(insertProductSerialsMutation, data);
+      }
+
+      if (router.isReady) {
+        router.push("/product-serials");
+      }
     } catch (err) {
       console.error(err);
     }
@@ -110,8 +170,8 @@ const SerialProducts: NextPageWithLayout<PageProps> = ({ products }) => {
                   <input
                     type="text"
                     id="serial-number"
-                    defaultValue={""}
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                    defaultValue={productSelected?.serial_number ?? ""}
                     {...register("serial_number")}
                   />
                 </div>
@@ -129,7 +189,7 @@ const SerialProducts: NextPageWithLayout<PageProps> = ({ products }) => {
                   <select
                     id="product-name"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                    defaultValue=""
+                    defaultValue={productSelected?.product_id ?? ""}
                     {...register("product_id")}
                   >
                     {products?.map((item: any, i: number) => (
@@ -152,8 +212,8 @@ const SerialProducts: NextPageWithLayout<PageProps> = ({ products }) => {
                   <input
                     type="text"
                     id="capacity"
-                    defaultValue={""}
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                    defaultValue={productSelected?.capacity ?? 0}
                     {...register("capacity")}
                   />
                   <p className="mt-3 text-sm leading-6 text-gray-600">
@@ -173,8 +233,8 @@ const SerialProducts: NextPageWithLayout<PageProps> = ({ products }) => {
                   <input
                     type="text"
                     id="optical-power"
-                    defaultValue={""}
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                    defaultValue={productSelected?.optical_power ?? ""}
                     {...register("optical_power")}
                   />
                   <p className="mt-3 text-sm leading-6 text-gray-600">
@@ -195,7 +255,7 @@ const SerialProducts: NextPageWithLayout<PageProps> = ({ products }) => {
                     id="description"
                     rows={3}
                     className="block w-full max-w-2xl rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    defaultValue={""}
+                    defaultValue={productSelected?.description ?? ""}
                     {...register("description")}
                   />
                   <p className="mt-3 text-sm leading-6 text-gray-600">
