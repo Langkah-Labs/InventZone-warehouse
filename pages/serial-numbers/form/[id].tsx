@@ -1,46 +1,41 @@
+import Link from "next/link";
 import SidebarLayout from "@/components/elements/SideBarLayout";
 import { Raleway } from "next/font/google";
 import { ReactElement } from "react";
-import Link from "next/link";
 import type { NextPageWithLayout } from "../../_app";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { graphqlRequest } from "@/utils/graphql";
 import { useRouter } from "next/router";
+import { SerialNumber, SerialNumberInput } from "@/types/serial-number";
+import { graphqlRequest } from "@/utils/graphql";
 import { GetServerSideProps } from "next";
-import { Product, ProductInput } from "@/types/product";
 
 const raleway = Raleway({ subsets: ["latin"] });
 
-const insertProductMutation = `
-  mutation InsertProductMutation($name: String!, $description: String!) {
-    insert_products_one(object: {name: $name, description: $description}) {
+const findSerialNumeberByIdQuery = `
+  query FindSerialNumberById($id: bigint!) {
+    serial_numbers_by_pk(id: $id) {
       id
-      name
-      description
+      name: product_name
+      productOrderId: product_order_id
+      quantity
       created_at
       updated_at
     }
   }
 `;
 
-const findProductByIdQuery = `
-  query FindProductByIdQuery($id: bigint!) {
-    products_by_pk(id: $id) {
-      created_at
-      description
+const updateSerialNumberByIdMutation = `
+  mutation UpdateSerialNumberById(
+    $id: bigint!,
+    $name: String!,
+    $productOrderId: String!,
+    $quantity: bigint!
+  ) {
+    update_serial_numbers_by_pk(pk_columns: {id: $id}, _set: {id: $id, product_name: $name, product_order_id: $productOrderId, quantity: $quantity}) {
       id
-      name
-      updated_at
-    }
-  }
-`;
-
-const updateProductByIdMutation = `
-  mutation UpdateProductById($id: bigint!, $name: String!, $description: String!) {
-    update_products_by_pk(pk_columns: {id: $id}, _set: {name: $name, description: $description}) {
-      id
-      name
-      description
+      name: product_name
+      productOrderId: product_order_id
+      quantity
       created_at
       updated_at
     }
@@ -48,7 +43,7 @@ const updateProductByIdMutation = `
 `;
 
 type PageProps = {
-  product?: Product;
+  serialNumber: SerialNumber;
 };
 
 export const getServerSideProps: GetServerSideProps<PageProps> = async (
@@ -57,13 +52,14 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
   const { id } = ctx.query;
 
   try {
-    const result = await graphqlRequest.request<any>(findProductByIdQuery, {
-      id,
-    });
+    const result = await graphqlRequest.request<any>(
+      findSerialNumeberByIdQuery,
+      { id }
+    );
 
     return {
       props: {
-        product: result["products_by_pk"],
+        serialNumber: result["serial_numbers_by_pk"],
       },
     };
   } catch (err) {
@@ -71,36 +67,32 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
 
     return {
       props: {
-        product: {},
+        serialNumber: {},
       },
     };
   }
 };
 
-const Products: NextPageWithLayout<PageProps> = ({ product }) => {
+const SerialNumbers: NextPageWithLayout<PageProps> = ({ serialNumber }) => {
   const router = useRouter();
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<ProductInput>();
+  } = useForm<SerialNumberInput>();
 
-  const onSubmit: SubmitHandler<ProductInput> = async (data) => {
+  const onSubmit: SubmitHandler<SerialNumberInput> = async (data) => {
     if (!router.isReady) return;
 
     const { id } = router.query;
 
     try {
-      if (id) {
-        await graphqlRequest.request(updateProductByIdMutation, {
-          ...data,
-          id,
-        });
-      } else {
-        await graphqlRequest.request(insertProductMutation, data);
-      }
+      await graphqlRequest.request(updateSerialNumberByIdMutation, {
+        ...data,
+        id,
+      });
 
-      router.push("/products");
+      router.push("/serial-numbers");
     } catch (err) {
       console.error(err);
     }
@@ -112,13 +104,33 @@ const Products: NextPageWithLayout<PageProps> = ({ product }) => {
         <div className="space-y-12 sm:space-y-16">
           <div>
             <h2 className="body-4large-bold leading-7 text-[#113A5D]">
-              Product
+              Serial Number
             </h2>
             <p className="mt-2 max-w-2xl leading-6 body-base-regular text-gray-400">
-              This information will be added as a new product in the system.
+              This information will be added as a new serial number data in the
+              system.
             </p>
 
             <div className="mt-10 space-y-8 border-b border-gray-900/10 pb-12 sm:space-y-0 sm:divide-y sm:divide-gray-900/10 sm:border-t sm:pb-0">
+              <div className="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
+                <label
+                  htmlFor="productOrderId"
+                  className="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5"
+                >
+                  No. PO
+                  <span className="text-[#C23A3A]">*</span>
+                </label>
+                <div className="mt-2 sm:col-span-2 sm:mt-0">
+                  <input
+                    type="text"
+                    id="productOrderId"
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                    defaultValue={serialNumber?.productOrderId ?? ""}
+                    {...register("productOrderId")}
+                  />
+                </div>
+              </div>
+
               <div className="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
                 <label
                   htmlFor="name"
@@ -132,31 +144,28 @@ const Products: NextPageWithLayout<PageProps> = ({ product }) => {
                     type="text"
                     id="name"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                    defaultValue={product?.name ?? ""}
+                    defaultValue={serialNumber?.name ?? ""}
                     {...register("name")}
                   />
-                  {/* <p className="mt-3 text-sm leading-6 text-gray-600">{hint}</p> */}
                 </div>
               </div>
 
               <div className="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
                 <label
-                  htmlFor="description"
+                  htmlFor="quantity"
                   className="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5"
                 >
-                  Description
+                  Qty.
+                  <span className="text-[#C23A3A]">*</span>
                 </label>
                 <div className="mt-2 sm:col-span-2 sm:mt-0">
-                  <textarea
-                    id="description"
-                    rows={3}
-                    className="block w-full max-w-2xl rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    defaultValue={product?.description ?? ""}
-                    {...register("description")}
+                  <input
+                    type="text"
+                    id="quantity"
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                    defaultValue={serialNumber?.quantity ?? ""}
+                    {...register("quantity")}
                   />
-                  <p className="mt-3 text-sm leading-6 text-gray-600">
-                    Write a few sentences about the product.
-                  </p>
                 </div>
               </div>
             </div>
@@ -169,7 +178,7 @@ const Products: NextPageWithLayout<PageProps> = ({ product }) => {
 
         <div className="mt-6 flex items-center justify-end gap-x-6">
           <Link
-            href="/products"
+            href="/serial-numbers"
             className="text-sm font-semibold leading-6 text-gray-900"
           >
             Cancel
@@ -186,8 +195,8 @@ const Products: NextPageWithLayout<PageProps> = ({ product }) => {
   );
 };
 
-Products.getLayout = function getLayout(page: ReactElement) {
+SerialNumbers.getLayout = function getLayout(page: ReactElement) {
   return <SidebarLayout>{page}</SidebarLayout>;
 };
 
-export default Products;
+export default SerialNumbers;
