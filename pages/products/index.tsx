@@ -1,14 +1,13 @@
-import Link from "next/link";
-import SidebarLayout from "@/components/elements/SideBarLayout";
-import { Raleway } from "next/font/google";
 import { ReactElement, useState, useEffect } from "react";
-import type { NextPageWithLayout } from "../_app";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { GetServerSideProps } from "next";
-import { Product } from "@/types/product";
-import { graphqlRequest } from "@/utils/graphql";
+import Link from "next/link";
 import { useRouter } from "next/router";
+import { Raleway } from "next/font/google";
+import type { NextPageWithLayout } from "../_app";
+import { graphqlRequest } from "@/utils/graphql";
+import SidebarLayout from "@/components/elements/SideBarLayout";
 import Loading from "@/components/elements/Loading";
+import { Product } from "@/types/product";
 
 const raleway = Raleway({ subsets: ["latin"] });
 
@@ -46,7 +45,6 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
     return {
       props: {
         products: result["products"],
-        loading: false,
       },
     };
   } catch (err) {
