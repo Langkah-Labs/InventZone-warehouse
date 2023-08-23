@@ -8,12 +8,13 @@ import {
   UsersIcon,
   XMarkIcon,
   DocumentDuplicateIcon,
-  Cog6ToothIcon,
   BookmarkSquareIcon,
   ArrowRightOnRectangleIcon,
 } from "@heroicons/react/24/outline";
 import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { Disclosure } from "@headlessui/react";
+import Session from "supertokens-web-js/recipe/session";
+import { useRouter } from "next/router";
 
 const navigation = [
   { name: "DASHBOARD", href: "/", icon: HomeIcon, current: true },
@@ -49,7 +50,18 @@ function classNames(...classes: any[]) {
 }
 
 export default function SidebarLayout({ children }: any) {
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const logout = async (event: any) => {
+    event.preventDefault();
+
+    if (!router.isReady) return;
+
+    await Session.signOut();
+
+    router.push("/auth/login");
+  };
 
   return (
     <>
@@ -230,8 +242,8 @@ export default function SidebarLayout({ children }: any) {
                           </ul>
                         </li>
                         <li className="mt-auto">
-                          <a
-                            href="#"
+                          <button
+                            onClick={logout}
                             className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-indigo-600"
                           >
                             <ArrowRightOnRectangleIcon
@@ -239,7 +251,7 @@ export default function SidebarLayout({ children }: any) {
                               aria-hidden="true"
                             />
                             LOG OUT
-                          </a>
+                          </button>
                         </li>
                       </ul>
                     </nav>
@@ -371,8 +383,8 @@ export default function SidebarLayout({ children }: any) {
                   </ul>
                 </li>
                 <li className="mt-auto">
-                  <a
-                    href="#"
+                  <button
+                    onClick={logout}
                     className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-red-400 hover:bg-red-50 hover:text-red-600"
                   >
                     <ArrowRightOnRectangleIcon
@@ -380,7 +392,7 @@ export default function SidebarLayout({ children }: any) {
                       aria-hidden="true"
                     />
                     LOG OUT
-                  </a>
+                  </button>
                 </li>
               </ul>
             </nav>
