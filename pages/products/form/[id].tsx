@@ -103,6 +103,7 @@ const Products: NextPageWithLayout<PageProps> = ({ product }) => {
       } else {
         await graphqlRequest.request(insertProductMutation, data);
       }
+
       swal({
         title: "Success!",
         text: "Your data has been saved!",

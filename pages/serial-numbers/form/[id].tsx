@@ -5,17 +5,18 @@ import { ReactElement } from "react";
 import type { NextPageWithLayout } from "../../_app";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useRouter } from "next/router";
-import { SerialNumberInput } from "@/types/serial-number";
+import { SerialNumber, SerialNumberInput } from "@/types/serial-number";
 import { graphqlRequest } from "@/utils/graphql";
+import { GetServerSideProps } from "next";
 
 const raleway = Raleway({ subsets: ["latin"] });
 
-const insertSerialNumberMutation = `
-  mutation InsertSerialNumber($productOrderId: String!, $name: String!, $quantity: bigint!) {
-    insert_serial_numbers_one(object: {product_name: $name, product_order_id: $productOrderId, quantity: $quantity}) {
+const findSerialNumeberByIdQuery = `
+  query FindSerialNumberById($id: bigint!) {
+    serial_numbers_by_pk(id: $id) {
       id
       name: product_name
-      product_order_id
+      productOrderId: product_order_id
       quantity
       created_at
       updated_at
@@ -23,7 +24,56 @@ const insertSerialNumberMutation = `
   }
 `;
 
-const SerialNumbers: NextPageWithLayout = () => {
+const updateSerialNumberByIdMutation = `
+  mutation UpdateSerialNumberById(
+    $id: bigint!,
+    $name: String!,
+    $productOrderId: String!,
+    $quantity: bigint!
+  ) {
+    update_serial_numbers_by_pk(pk_columns: {id: $id}, _set: {id: $id, product_name: $name, product_order_id: $productOrderId, quantity: $quantity}) {
+      id
+      name: product_name
+      productOrderId: product_order_id
+      quantity
+      created_at
+      updated_at
+    }
+  }
+`;
+
+type PageProps = {
+  serialNumber: SerialNumber;
+};
+
+export const getServerSideProps: GetServerSideProps<PageProps> = async (
+  ctx
+) => {
+  const { id } = ctx.query;
+
+  try {
+    const result = await graphqlRequest.request<any>(
+      findSerialNumeberByIdQuery,
+      { id }
+    );
+
+    return {
+      props: {
+        serialNumber: result["serial_numbers_by_pk"],
+      },
+    };
+  } catch (err) {
+    console.error(err);
+
+    return {
+      props: {
+        serialNumber: {},
+      },
+    };
+  }
+};
+
+const SerialNumbers: NextPageWithLayout<PageProps> = ({ serialNumber }) => {
   const router = useRouter();
   const {
     register,
@@ -34,8 +84,13 @@ const SerialNumbers: NextPageWithLayout = () => {
   const onSubmit: SubmitHandler<SerialNumberInput> = async (data) => {
     if (!router.isReady) return;
 
+    const { id } = router.query;
+
     try {
-      await graphqlRequest.request(insertSerialNumberMutation, data);
+      await graphqlRequest.request(updateSerialNumberByIdMutation, {
+        ...data,
+        id,
+      });
 
       router.push("/serial-numbers");
     } catch (err) {
@@ -70,6 +125,7 @@ const SerialNumbers: NextPageWithLayout = () => {
                     type="text"
                     id="productOrderId"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                    defaultValue={serialNumber?.productOrderId ?? ""}
                     {...register("productOrderId")}
                   />
                 </div>
@@ -88,6 +144,7 @@ const SerialNumbers: NextPageWithLayout = () => {
                     type="text"
                     id="name"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                    defaultValue={serialNumber?.name ?? ""}
                     {...register("name")}
                   />
                 </div>
@@ -106,6 +163,7 @@ const SerialNumbers: NextPageWithLayout = () => {
                     type="text"
                     id="quantity"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                    defaultValue={serialNumber?.quantity ?? ""}
                     {...register("quantity")}
                   />
                 </div>
