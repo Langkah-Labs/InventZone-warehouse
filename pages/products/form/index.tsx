@@ -5,6 +5,7 @@ import { Raleway } from "next/font/google";
 import type { NextPageWithLayout } from "../../_app";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { graphqlRequest } from "@/utils/graphql";
+import swal from "sweetalert";
 import SidebarLayout from "@/components/elements/SideBarLayout";
 import Loading from "@/components/elements/Loading";
 import { ProductInput } from "@/types/product";
@@ -39,7 +40,13 @@ const Products: NextPageWithLayout = () => {
       setIsLoading(true);
       await graphqlRequest.request(insertProductMutation, data);
 
-      router.push("/products");
+      swal({
+        title: "Success!",
+        text: "Your data has been saved!",
+        icon: "success",
+      }).then(() => {
+        router.push("/products");
+      });
     } catch (err) {
       console.error(err);
     }

@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { Raleway } from "next/font/google";
 import type { NextPageWithLayout } from "../_app";
 import { graphqlRequest } from "@/utils/graphql";
+import swal from "sweetalert";
 import SidebarLayout from "@/components/elements/SideBarLayout";
 import Loading from "@/components/elements/Loading";
 import { Product } from "@/types/product";
@@ -70,15 +71,27 @@ const Products: NextPageWithLayout<PageProps> = ({ products }) => {
   async function deleteProduct(id: string) {
     if (!router.isReady) return;
 
-    try {
-      setIsLoading(true);
-      await graphqlRequest.request<any>(deleteProductByIdMutation, {
-        id,
-      });
-      router.reload();
-    } catch (err) {
-      console.error(err);
-    }
+    swal({
+      title: "Are you sure?",
+      text: "Once deleted, you will not be able to recover this record!",
+      icon: "warning",
+      buttons: ["Cancel", "Yes"],
+      dangerMode: true,
+    }).then(async (willDelete) => {
+      if (willDelete) {
+        try {
+          setIsLoading(true);
+          await graphqlRequest.request<any>(deleteProductByIdMutation, {
+            id,
+          });
+          router.reload();
+        } catch (err) {
+          console.error(err);
+        }
+      } else {
+        swal("Your record is safe!");
+      }
+    });
   }
 
   useEffect(() => {

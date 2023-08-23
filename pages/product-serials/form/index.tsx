@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Raleway } from "next/font/google";
 import type { NextPageWithLayout } from "../../_app";
 import { useForm, SubmitHandler } from "react-hook-form";
+import swal from "sweetalert";
 import { graphqlRequest } from "@/utils/graphql";
 import { useRouter } from "next/router";
 import SidebarLayout from "@/components/elements/SideBarLayout";
@@ -82,7 +83,13 @@ const SerialProducts: NextPageWithLayout<PageProps> = ({ products }) => {
       setIsLoading(true);
       await graphqlRequest.request(insertProductSerialMutation, data);
 
-      router.push("/product-serials");
+      swal({
+        title: "Success!",
+        text: "Your data has been saved!",
+        icon: "success",
+      }).then(() => {
+        router.push("/product-serials");
+      });
     } catch (err) {
       console.error(err);
     }
