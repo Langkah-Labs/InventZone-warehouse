@@ -17,6 +17,7 @@ const findAllProductsQuery = `
     products {
       id
       name
+      shorten_name
       created_at
       updated_at
     }
@@ -28,6 +29,7 @@ const deleteProductByIdMutation = `
     delete_products_by_pk(id: $id) {
       id
       name
+      shorten_name
       description
       created_at
       updated_at
@@ -184,6 +186,12 @@ const Products: NextPageWithLayout<PageProps> = ({ products }) => {
                         </th>
                         <th
                           scope="col"
+                          className="sticky top-0 z-10 border-b border-gray-300 bg-white bg-opacity-75 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter sm:pl-6 lg:pl-8"
+                        >
+                          Shorten Name
+                        </th>
+                        <th
+                          scope="col"
                           className="sticky top-0 z-10 border-b border-gray-300 bg-white bg-opacity-75 py-3.5 pl-3 pr-4 backdrop-blur backdrop-filter sm:pr-6 lg:pr-8"
                         >
                           <span className="sr-only">Action</span>
@@ -206,6 +214,16 @@ const Products: NextPageWithLayout<PageProps> = ({ products }) => {
                               )}
                             >
                               {product.name}
+                            </td>
+                            <td
+                              className={classNames(
+                                productIdx !== product.length - 1
+                                  ? "border-b border-gray-200"
+                                  : "",
+                                "whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 lg:pl-8"
+                              )}
+                            >
+                              {product.shorten_name}
                             </td>
                             <td
                               className={classNames(
