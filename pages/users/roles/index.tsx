@@ -1,20 +1,80 @@
+import Link from "next/link";
 import SidebarLayout from "@/components/elements/SideBarLayout";
 import { Raleway } from "next/font/google";
 import { ReactElement } from "react";
-import { SessionAuth } from "supertokens-auth-react/recipe/session";
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
-import type { NextPageWithLayout } from "./../_app";
+import type { NextPageWithLayout } from "../../_app";
+import { Role } from "@/types/role";
+import { GetServerSideProps } from "next";
+import supertokensNode from "supertokens-node";
+import { backendConfig } from "@/config/backendConfig";
+import UserRoles from "supertokens-node/recipe/userroles";
+import { useRouter } from "next/router";
 
 const raleway = Raleway({ subsets: ["latin"] });
 
-const roles = [
-  {
-    name: "Role 1",
-  },
-  // More people...
-];
+type PageProps = {
+  roles?: Array<Role>;
+};
 
-const Roles: NextPageWithLayout = () => {
+export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
+  supertokensNode.init(backendConfig());
+
+  try {
+    const response = await UserRoles.getAllRoles();
+    const roles = response.roles;
+
+    let rolesResponse: Array<Role> = [];
+    for (const role of roles) {
+      const result = await UserRoles.getPermissionsForRole(role);
+      if (result.status === "OK") {
+        const { permissions } = result;
+        rolesResponse = [
+          ...rolesResponse,
+          {
+            role,
+            permissions,
+          },
+        ];
+      }
+    }
+
+    return {
+      props: {
+        roles: rolesResponse,
+      },
+    };
+  } catch (err) {
+    console.error(err);
+
+    return {
+      props: {
+        roles: [],
+      },
+    };
+  }
+};
+
+const Roles: NextPageWithLayout<PageProps> = ({ roles }) => {
+  const router = useRouter();
+
+  const deleteRole = async (role: string) => {
+    if (!router.isReady) return;
+
+    try {
+      const response = await fetch(`/api/user/roles/${role}`, {
+        method: "DELETE",
+      });
+      const body = await response.json();
+
+      if (body.status === "OK") {
+        router.reload();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <main className={`${raleway.className}`}>
       <div className="px-4 sm:px-6 lg:px-8">
@@ -43,12 +103,12 @@ const Roles: NextPageWithLayout = () => {
                 placeholder="Search for roles"
               />
             </div>
-            <button
-              type="button"
+            <Link
+              href="/users/roles/new"
               className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               Add new
-            </button>
+            </Link>
           </div>
         </div>
         <div className="mt-8 flow-root">
@@ -67,23 +127,23 @@ const Roles: NextPageWithLayout = () => {
                       scope="col"
                       className="relative py-3.5 pl-3 pr-4 sm:pr-0"
                     >
-                      <span className="sr-only">Edit</span>
+                      <span className="sr-only">Delete</span>
                     </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {roles.map((roles) => (
-                    <tr key={roles.name}>
+                  {roles?.map(({ role }) => (
+                    <tr key={role}>
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-                        {roles.name}
+                        {role}
                       </td>
                       <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                        <a
-                          href="#"
+                        <button
+                          onClick={() => deleteRole(role)}
                           className="text-indigo-600 hover:text-indigo-900"
                         >
-                          Edit<span className="sr-only">, {roles.name}</span>
-                        </a>
+                          Delete<span className="sr-only">, {role}</span>
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -98,7 +158,6 @@ const Roles: NextPageWithLayout = () => {
 };
 
 Roles.getLayout = function getLayout(page: ReactElement) {
-  // TODO: add session auth component
   return <SidebarLayout>{page}</SidebarLayout>;
 };
 
