@@ -20,11 +20,15 @@ const findAllSerialNumbersQuery = `
   query FindAllSerialNumbers {
     serial_numbers {
       id
-      productOrderId: product_order_id
-      name: product_name
+      product_id
       quantity
+      product_name
+      product_order_id
       created_at
       updated_at
+      product {
+        name
+      }
     }
   }
 `;
@@ -277,15 +281,15 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({ serialNumbers }) => {
                     <tbody className="divide-y divide-gray-200">
                       {serialNumbers
                         .filter((item: any) =>
-                          item.name.toLowerCase().includes(searchValue)
+                          item.product.name.toLowerCase().includes(searchValue)
                         )
                         .map((serialNumber) => (
                           <tr key={serialNumber.id}>
                             <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-                              {serialNumber.productOrderId}
+                              {serialNumber.product_order_id}
                             </td>
                             <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-                              {serialNumber.name}
+                              {serialNumber.product.name}
                             </td>
                             <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
                               {serialNumber.quantity}

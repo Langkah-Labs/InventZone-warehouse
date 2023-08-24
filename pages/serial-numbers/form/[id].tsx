@@ -9,16 +9,29 @@ import type { NextPageWithLayout } from "../../_app";
 import { graphqlRequest } from "@/utils/graphql";
 import SidebarLayout from "@/components/elements/SideBarLayout";
 import Loading from "@/components/elements/Loading";
+import { Product } from "@/types/product";
 import { SerialNumber, SerialNumberInput } from "@/types/serial-number";
 
 const raleway = Raleway({ subsets: ["latin"] });
+
+const findAllProductsQuery = `
+  query FindAllProductsQuery {
+    products {
+      id
+      name
+      created_at
+      updated_at
+    }
+  }
+`;
 
 const findSerialNumeberByIdQuery = `
   query FindSerialNumberById($id: bigint!) {
     serial_numbers_by_pk(id: $id) {
       id
       name: product_name
-      productOrderId: product_order_id
+      product_id
+      product_order_id
       quantity
       created_at
       updated_at
@@ -29,14 +42,16 @@ const findSerialNumeberByIdQuery = `
 const updateSerialNumberByIdMutation = `
   mutation UpdateSerialNumberById(
     $id: bigint!,
-    $name: String!,
+    $name: String,
     $productOrderId: String!,
     $quantity: bigint!
+    $product_id: bigint!
   ) {
-    update_serial_numbers_by_pk(pk_columns: {id: $id}, _set: {id: $id, product_name: $name, product_order_id: $productOrderId, quantity: $quantity}) {
+    update_serial_numbers_by_pk(pk_columns: {id: $id}, _set: {id: $id, product_name: $name, product_order_id: $productOrderId, quantity: $quantity, product_id: $product_id}) {
       id
       name: product_name
-      productOrderId: product_order_id
+      product_id
+      product_order_id
       quantity
       created_at
       updated_at
@@ -45,6 +60,7 @@ const updateSerialNumberByIdMutation = `
 `;
 
 type PageProps = {
+  products?: Array<Product>;
   serialNumber: SerialNumber;
 };
 
@@ -54,14 +70,17 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
   const { id } = ctx.query;
 
   try {
-    const result = await graphqlRequest.request<any>(
+    const result = await graphqlRequest.request<any>(findAllProductsQuery, {});
+
+    const resultSelected = await graphqlRequest.request<any>(
       findSerialNumeberByIdQuery,
       { id }
     );
 
     return {
       props: {
-        serialNumber: result["serial_numbers_by_pk"],
+        products: result["products"],
+        serialNumber: resultSelected["serial_numbers_by_pk"],
       },
     };
   } catch (err) {
@@ -75,7 +94,10 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
   }
 };
 
-const SerialNumbers: NextPageWithLayout<PageProps> = ({ serialNumber }) => {
+const SerialNumbers: NextPageWithLayout<PageProps> = ({
+  products,
+  serialNumber,
+}) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const {
@@ -140,13 +162,13 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({ serialNumber }) => {
                       type="text"
                       id="productOrderId"
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                      defaultValue={serialNumber?.productOrderId ?? ""}
+                      defaultValue={serialNumber?.product_order_id ?? ""}
                       {...register("productOrderId")}
                     />
                   </div>
                 </div>
 
-                <div className="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
+                {/* <div className="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
                   <label
                     htmlFor="name"
                     className="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5"
@@ -162,6 +184,31 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({ serialNumber }) => {
                       defaultValue={serialNumber?.name ?? ""}
                       {...register("name")}
                     />
+                  </div>
+                </div> */}
+
+                <div className="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
+                  <label
+                    htmlFor="product-name"
+                    className="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5"
+                  >
+                    Product name
+                    <span className="text-[#C23A3A]">*</span>
+                  </label>
+                  <div className="mt-2 sm:col-span-2 sm:mt-0">
+                    <select
+                      id="product-name"
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                      defaultValue={serialNumber?.product_id ?? ""}
+                      {...register("product_id")}
+                    >
+                      <option value="">Choose One</option>
+                      {products?.map((item: any, i: number) => (
+                        <option value={item.id} key={i}>
+                          {item.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
 

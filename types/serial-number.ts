@@ -1,14 +1,19 @@
 export type SerialNumberInput = {
   productOrderId: string;
+  product_id: number;
   name: string;
   quantity: string;
 };
 
 export type SerialNumber = {
   id: string;
-  productOrderId: string;
+  product_order_id: string;
+  product_id: number;
   name: string;
   quantity: string;
   createdAt: string;
   updatedAt: string;
+  product: {
+    name: string;
+  };
 };
