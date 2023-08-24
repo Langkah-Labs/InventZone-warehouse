@@ -26,6 +26,7 @@ const findAllProductSerialsQuery = `
       updated_at
       product {
         name
+        shorten_name
       }
     }
   }
@@ -241,7 +242,8 @@ const SerialProducts: NextPageWithLayout<PageProps> = ({ productSerials }) => {
                                 "whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 lg:pl-8"
                               )}
                             >
-                              {productSerial.product.name}
+                              {productSerial.product.name}&nbsp;-&nbsp;(
+                              {productSerial.product.shorten_name})
                             </td>
                             <td
                               className={classNames(

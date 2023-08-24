@@ -17,5 +17,6 @@ export type ProductSerials = {
   updated_at: string;
   product: {
     name: string;
+    shorten_name: string;
   };
 };

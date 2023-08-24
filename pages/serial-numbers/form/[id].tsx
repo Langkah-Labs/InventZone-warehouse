@@ -19,6 +19,7 @@ const findAllProductsQuery = `
     products {
       id
       name
+      shorten_name
       created_at
       updated_at
     }
@@ -205,7 +206,7 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({
                       <option value="">Choose One</option>
                       {products?.map((item: any, i: number) => (
                         <option value={item.id} key={i}>
-                          {item.name}
+                          {item.name}&nbsp;-&nbsp;({item.shorten_name})
                         </option>
                       ))}
                     </select>

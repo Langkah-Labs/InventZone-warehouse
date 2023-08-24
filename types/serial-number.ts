@@ -15,5 +15,6 @@ export type SerialNumber = {
   updatedAt: string;
   product: {
     name: string;
+    shorten_name: string;
   };
 };

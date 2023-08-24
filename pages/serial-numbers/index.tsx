@@ -28,6 +28,7 @@ const findAllSerialNumbersQuery = `
       updated_at
       product {
         name
+        shorten_name
       }
     }
   }
@@ -289,7 +290,8 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({ serialNumbers }) => {
                               {serialNumber.product_order_id}
                             </td>
                             <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-                              {serialNumber.product.name}
+                              {serialNumber.product.name}&nbsp;-&nbsp;(
+                              {serialNumber.product.shorten_name})
                             </td>
                             <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
                               {serialNumber.quantity}
@@ -373,7 +375,7 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({ serialNumbers }) => {
                                 title="Generate Serial Number"
                                 onClick={() =>
                                   clickGenerateHandler(
-                                    serialNumber.name,
+                                    serialNumber.product.shorten_name,
                                     Number(serialNumber.quantity)
                                   )
                                 }
