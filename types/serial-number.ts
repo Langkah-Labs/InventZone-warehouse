@@ -13,6 +13,7 @@ export type SerialNumber = {
   quantity: string;
   createdAt: string;
   updatedAt: string;
+  status: Boolean;
   product: {
     name: string;
     shorten_name: string;
