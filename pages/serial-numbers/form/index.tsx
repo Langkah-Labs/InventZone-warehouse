@@ -89,6 +89,15 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({ products }) => {
       });
     } catch (err) {
       console.error(err);
+      swal({
+        title: "Failed!",
+        text: "Oops, something went wrong",
+        icon: "error",
+      }).then(() => {
+        if (router.isReady) {
+          router.push("/serial-numbers");
+        }
+      });
     }
   };
 
@@ -123,6 +132,7 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({ products }) => {
                       id="productOrderId"
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                       {...register("productOrderId")}
+                      required
                     />
                   </div>
                 </div>
@@ -159,6 +169,7 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({ products }) => {
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                       defaultValue=""
                       {...register("product_id")}
+                      required
                     >
                       <option value="">Choose One</option>
                       {products?.map((item: any, i: number) => (
@@ -184,6 +195,7 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({ products }) => {
                       id="quantity"
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                       {...register("quantity")}
+                      required
                     />
                   </div>
                 </div>

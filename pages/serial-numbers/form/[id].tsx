@@ -62,20 +62,21 @@ const updateSerialNumberByIdMutation = `
 
 type PageProps = {
   products?: Array<Product>;
-  serialNumber: SerialNumber;
+  serialNumber?: SerialNumber;
 };
 
 export const getServerSideProps: GetServerSideProps<PageProps> = async (
   ctx
 ) => {
   const { id } = ctx.query;
-
   try {
     const result = await graphqlRequest.request<any>(findAllProductsQuery, {});
 
     const resultSelected = await graphqlRequest.request<any>(
       findSerialNumeberByIdQuery,
-      { id }
+      {
+        id,
+      }
     );
 
     return {
@@ -89,7 +90,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
 
     return {
       props: {
-        serialNumber: {},
+        products: [],
       },
     };
   }
@@ -130,6 +131,15 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({
       });
     } catch (err) {
       console.error(err);
+      swal({
+        title: "Failed!",
+        text: "Oops, something went wrong",
+        icon: "error",
+      }).then(() => {
+        if (router.isReady) {
+          router.push("/serial-numbers");
+        }
+      });
     }
   };
 
@@ -165,6 +175,7 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                       defaultValue={serialNumber?.product_order_id ?? ""}
                       {...register("productOrderId")}
+                      required
                     />
                   </div>
                 </div>
@@ -202,6 +213,7 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                       defaultValue={serialNumber?.product_id ?? ""}
                       {...register("product_id")}
+                      required
                     >
                       <option value="">Choose One</option>
                       {products?.map((item: any, i: number) => (
@@ -228,6 +240,7 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                       defaultValue={serialNumber?.quantity ?? ""}
                       {...register("quantity")}
+                      required
                     />
                   </div>
                 </div>
