@@ -13,6 +13,8 @@ import {
 } from "@heroicons/react/24/outline";
 import SidebarLayout from "@/components/elements/SideBarLayout";
 import Seo from "@/components/elements/Seo";
+import { User } from "@/types/user";
+import EmailPassword from "supertokens-node/recipe/emailpassword";
 
 const raleway = Raleway({ subsets: ["latin"] });
 
@@ -46,6 +48,20 @@ const countAllProductSerialsQuery = `
   }
 `;
 
+const findUserByEmailQuery = `
+  query FindUserByEmail($email: String!) {
+    users(where: {email: {_eq: $email}}) {
+      id
+      name
+      role
+      email
+      phone
+      username
+      company
+    }
+  }
+`;
+
 type aggregateObject = {
   aggregate: {
     count: number;
@@ -56,12 +72,14 @@ type PageProps = {
   products_aggregate?: aggregateObject;
   serial_numbers_aggregate?: aggregateObject;
   product_serials_aggregate?: aggregateObject;
+  user: User;
 };
 
 export async function getServerSideProps(context: any) {
   supertokensNode.init(backendConfig());
 
   let session;
+  let user;
 
   try {
     session = await Session.getSession(context.req, context.res, {
@@ -69,6 +87,18 @@ export async function getServerSideProps(context: any) {
         return [];
       },
     });
+    const userInfo = await EmailPassword.getUserById(session!.getUserId());
+    if (userInfo) {
+      const userResult = await graphqlRequest.request<any>(
+        findUserByEmailQuery,
+        {
+          email: userInfo.email,
+        }
+      );
+
+      user = userResult["users"][0];
+    }
+
     const resultProducts = await graphqlRequest.request<any>(
       countAllProductsQuery,
       {}
@@ -84,12 +114,12 @@ export async function getServerSideProps(context: any) {
 
     return {
       props: {
-        userId: session!.getUserId(),
         products_aggregate: resultProducts["products_aggregate"],
         serial_numbers_aggregate:
           resultSerialNumbers["serial_numbers_aggregate"],
         product_serials_aggregate:
           resultProductSerials["product_serials_aggregate"],
+        user,
       },
     };
   } catch (err: any) {
@@ -120,6 +150,7 @@ const Home: NextPageWithLayout<PageProps> = ({
   products_aggregate,
   serial_numbers_aggregate,
   product_serials_aggregate,
+  user,
 }) => {
   const stats = [
     {
@@ -153,7 +184,7 @@ const Home: NextPageWithLayout<PageProps> = ({
           <div className="flex-grow sm:flex sm:items-center">
             <div className="sm:flex-auto">
               <h1 className="body-4large-bold font-semibold leading-6 text-[#113A5D]">
-                Hello, Tom!
+                Hello, {user?.name}
               </h1>
               <p className="mt-4 body-base-regular text-gray-400">
                 View your current product progress.
