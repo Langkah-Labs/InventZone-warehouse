@@ -7,8 +7,9 @@ import { signUp } from "supertokens-web-js/recipe/emailpassword";
 const raleway = Raleway({ subsets: ["latin"] });
 
 type RegisterInput = {
-  team: string;
+  company: string;
   username: string;
+  name: string;
   email: string;
   password: string;
   passwordConfirmation: string;
@@ -31,12 +32,16 @@ export default function Register() {
       let response = await signUp({
         formFields: [
           {
-            id: "team",
-            value: data.team,
+            id: "company",
+            value: data.company,
           },
           {
             id: "username",
             value: data.username,
+          },
+          {
+            id: "name",
+            value: data.name,
           },
           {
             id: "email",
@@ -118,16 +123,43 @@ export default function Register() {
                       />
                     </svg>
                   </div>
-                  <select
-                    id="team"
-                    placeholder="Select Team"
+                  <input
+                    type="text"
+                    id="company"
                     className="block w-full bg-[#4F5C6233] rounded-md border-0 py-5 pl-14 pr-12 text-[#40404099] placeholder:text-[#40404099] focus:ring-2 focus:ring-inset focus:[#4F99FF] sm:text-sm sm:leading-6"
-                    {...register("team")}
-                  >
-                    <option disabled>Select Team</option>
-                    <option value="team_a">Team A</option>
-                    <option value="team_b">Team B</option>
-                  </select>
+                    placeholder="Company Name"
+                    aria-describedby="company"
+                    {...register("company")}
+                  />
+                </div>
+              </div>
+
+              <div className="mt-2">
+                <div className="relative mt-2 rounded-md shadow-sm">
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      fill="none"
+                    >
+                      <path
+                        stroke="#2A4365"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M20 21v-2.069c0-1.097-.421-2.15-1.172-2.926A3.933 3.933 0 0 0 16 14.793H8c-1.06 0-2.078.436-2.828 1.212A4.211 4.211 0 0 0 4 18.931v2.07M12 11.276c2.21 0 4-1.853 4-4.138S14.21 3 12 3 8 4.853 8 7.138s1.79 4.138 4 4.138Z"
+                      />
+                    </svg>
+                  </div>
+                  <input
+                    type="text"
+                    id="name"
+                    className="block w-full bg-[#4F5C6233] rounded-md border-0 py-5 pl-14 pr-12 text-[#40404099] placeholder:text-[#40404099] focus:ring-2 focus:ring-inset focus:[#4F99FF] sm:text-sm sm:leading-6"
+                    placeholder="Full Name"
+                    aria-describedby="name"
+                    {...register("name")}
+                  />
                 </div>
               </div>
 
