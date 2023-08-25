@@ -1,32 +1,43 @@
 import React, { Fragment, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { InboxIcon } from "@heroicons/react/24/outline";
-import TextField from "@/components/elements/TextField";
 import { Props } from "./type";
+import { useForm, SubmitHandler } from "react-hook-form";
+
+type EmailInput = {
+  email: string;
+};
 
 export default function Index({
   title,
   description,
   labelAction,
-  actionHandler1,
+  actionHandler,
+  rejectHandler,
   labelReject,
+  show,
 }: Props) {
-  const [open, setOpen] = useState(true);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<EmailInput>();
 
-  const action1Handler = () => {
-    setOpen(false);
-    actionHandler1();
+  const onSubmit: SubmitHandler<EmailInput> = ({ email }) => {
+    rejectHandler();
+
+    actionHandler(email);
   };
 
   const cancelButtonRef = useRef(null);
 
   return (
-    <Transition.Root show={open} as={Fragment}>
+    <Transition.Root show={show} as={Fragment}>
       <Dialog
         as="div"
         className="relative z-100"
         initialFocus={cancelButtonRef}
-        onClose={setOpen}
+        onClose={() => rejectHandler()}
       >
         <Transition.Child
           as={Fragment}
@@ -52,7 +63,7 @@ export default function Index({
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
-                <div>
+                <form id="emailForm" onSubmit={handleSubmit(onSubmit)}>
                   <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
                     <InboxIcon
                       className="h-6 w-6 text-gray-600"
@@ -70,27 +81,30 @@ export default function Index({
                       <p className="text-sm text-gray-500">{description}</p>
                     </div>
                     <div className="mt-2">
-                      <TextField
-                        label="email"
-                        name="email"
-                        placeholder="example@mail.com"
-                        isSearch={false}
-                      />
+                      <div className="relative rounded-md shadow-sm">
+                        <input
+                          type="text"
+                          id="text"
+                          className="block w-full rounded-md border-0 py-1.5 pl-4 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                          placeholder="example@email.com"
+                          {...register("email")}
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
+                </form>
                 <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
                   <button
-                    type="button"
+                    form="emailForm"
+                    type="submit"
                     className="inline-flex w-full justify-center rounded-md bg-[#113A5D] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
-                    onClick={() => action1Handler()}
                   >
                     {labelAction}
                   </button>
                   <button
                     type="button"
                     className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0"
-                    onClick={() => setOpen(false)}
+                    onClick={() => rejectHandler(false)}
                     ref={cancelButtonRef}
                   >
                     {labelReject}
