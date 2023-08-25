@@ -180,34 +180,34 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({ serialNumbers }) => {
     const serialNumber = randomSerialNumber(name, "KDK", qty);
     setGenerateValue(serialNumber);
 
-    for (let i = 0; i < qty; i++) {
-      try {
-        setIsLoading(true);
-        await graphqlRequest.request(insertGeneratedSerialNumbers, {
-          serial_number_id: id,
-          code: serialNumber[i],
-          // Get the user name
-          created_by: "me",
-        });
+    // for (let i = 0; i < qty; i++) {
+    //   try {
+    //     setIsLoading(true);
+    //     await graphqlRequest.request(insertGeneratedSerialNumbers, {
+    //       serial_number_id: id,
+    //       code: serialNumber[i],
+    //       // Get the user name
+    //       created_by: "me",
+    //     });
 
-        await graphqlRequest.request(updateSerialNumberByIdMutation, {
-          status: true,
-          id,
-        });
-      } catch (err) {
-        console.error(err);
-        swal({
-          title: "Failed!",
-          text: "Oops, something went wrong",
-          icon: "error",
-          closeOnClickOutside: false,
-        }).then(() => {
-          if (router.isReady) {
-            router.push("/serial-numbers");
-          }
-        });
-      }
-    }
+    //     await graphqlRequest.request(updateSerialNumberByIdMutation, {
+    //       status: true,
+    //       id,
+    //     });
+    //   } catch (err) {
+    //     console.error(err);
+    //     swal({
+    //       title: "Failed!",
+    //       text: "Oops, something went wrong",
+    //       icon: "error",
+    //       closeOnClickOutside: false,
+    //     }).then(() => {
+    //       if (router.isReady) {
+    //         router.push("/serial-numbers");
+    //       }
+    //     });
+    //   }
+    // }
 
     if (serialNumber) {
       setIsLoading(false);
@@ -496,7 +496,7 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({ serialNumbers }) => {
                                   </div>
                                 ) : (
                                   <Link
-                                    href={`/serial-numbers/detail/${serialNumber.id}`}
+                                    href={`/serial-numbers/detail/${serialNumber.id}?no_po=${serialNumber.product_order_id}`}
                                     className="cursor-pointer inline-flex items-center gap-x-1.5 ml-2 rounded-md bg-[#FFD335] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                     data-te-toggle="tooltip"
                                     title="View Generate Serial Number"

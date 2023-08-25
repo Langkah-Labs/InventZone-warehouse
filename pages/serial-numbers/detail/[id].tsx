@@ -1,9 +1,12 @@
 import { ReactElement, useState, useEffect } from "react";
 import { GetServerSideProps } from "next";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { Raleway } from "next/font/google";
 import type { NextPageWithLayout } from "../../_app";
 import { graphqlRequest } from "@/utils/graphql";
+import { CSVLink } from "react-csv";
+import dayjs from "dayjs";
 import Seo from "@/components/elements/Seo";
 import { GeneratedSerialNumber } from "@/types/serial-number";
 
@@ -55,17 +58,38 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
   }
 };
 
+type value = {
+  code: string;
+  created_at: string;
+};
+
+type data = {
+  data: Array<value>;
+};
+
 const Index: NextPageWithLayout<PageProps> = ({ generated_serial_numbers }) => {
+  const router = useRouter();
+  const { no_po } = router.query;
+
   const [isClickedEmail, setIsClickedEmail] = useState(false);
-  const [isClickedDownload, setIsClickedDownload] = useState(false);
 
   const emailHandler = () => {
     setIsClickedEmail(!isClickedEmail);
   };
 
-  const downloadHandler = () => {
-    setIsClickedDownload(!isClickedDownload);
-  };
+  const headers = [
+    { label: "Serial Number", key: "code" },
+    { label: "Created at", key: "created_at" },
+  ];
+
+  const data = generated_serial_numbers?.map((item) => {
+    const obj = {
+      code: item.code,
+      created_at: dayjs(item.created_at).format("MMM D, YYYY"),
+    };
+    return obj;
+  });
+
   return (
     <div>
       <Seo title="InventZone" />
@@ -107,10 +131,7 @@ const Index: NextPageWithLayout<PageProps> = ({ generated_serial_numbers }) => {
                 </svg>
                 Share via Email
               </div>
-              <div
-                onClick={() => downloadHandler()}
-                className="inline-flex items-center gap-x-1.5 rounded-md bg-[#129483ff] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
+              <div className="inline-flex items-center gap-x-1.5 rounded-md bg-[#129483ff] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -125,7 +146,14 @@ const Index: NextPageWithLayout<PageProps> = ({ generated_serial_numbers }) => {
                     d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
                   />
                 </svg>
-                Export CSV
+                <CSVLink
+                  data={data}
+                  headers={headers}
+                  filename={`Serial Number - ${no_po}.csv`}
+                  target="_blank"
+                >
+                  Export CSV
+                </CSVLink>
               </div>
             </div>
           </div>
