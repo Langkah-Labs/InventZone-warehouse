@@ -6,18 +6,20 @@ import type { NextPageWithLayout } from "../../_app";
 import { graphqlRequest } from "@/utils/graphql";
 import Seo from "@/components/elements/Seo";
 import { GeneratedSerialNumber } from "@/types/serial-number";
+import { useRouter } from "next/router";
+import FormAlert from "@/components/elements/Modals/FormAlert";
 
 const raleway = Raleway({ subsets: ["latin"] });
 
 const findSerialNumeberByIdQuery = `
   query FindSerialNumberById($serial_number_id: bigint!) {
     generated_serial_numbers(where: {serial_number_id: {_eq: $serial_number_id}}) {
-        id
-        serial_number_id
-        code
-        created_by
-        created_at
-        updated_at
+      id
+      serial_number_id
+      code
+      created_by
+      created_at
+      updated_at
     }
   }
 `;
@@ -56,18 +58,37 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
 };
 
 const Index: NextPageWithLayout<PageProps> = ({ generated_serial_numbers }) => {
+  const router = useRouter();
   const [isClickedEmail, setIsClickedEmail] = useState(false);
   const [isClickedDownload, setIsClickedDownload] = useState(false);
 
-  const emailHandler = () => {
-    setIsClickedEmail(!isClickedEmail);
+  const emailHandler = async () => {
+    if (!router.isReady) return;
+
+    setIsClickedEmail((prevValue) => !prevValue);
+  };
+
+  const sendEmail = async ({ to }: { to: string }) => {
+    const { id } = router.query;
+
+    await fetch("/api/serial-numbers/send-email", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        serialNumberId: id,
+        to,
+      }),
+    });
   };
 
   const downloadHandler = () => {
     setIsClickedDownload(!isClickedDownload);
   };
+
   return (
-    <div>
+    <>
       <Seo title="InventZone" />
       <div className={`${raleway.className}`}>
         <div className="rounded-lg p-8 text-sky-600 underline underline-offset-4 shadow-md">
@@ -87,7 +108,7 @@ const Index: NextPageWithLayout<PageProps> = ({ generated_serial_numbers }) => {
               </p>
             </div>
             <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex items-center gap-2">
-              <div
+              <button
                 onClick={() => emailHandler()}
                 className="inline-flex items-center gap-x-1.5 rounded-md bg-yellow-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
@@ -106,8 +127,8 @@ const Index: NextPageWithLayout<PageProps> = ({ generated_serial_numbers }) => {
                   />
                 </svg>
                 Share via Email
-              </div>
-              <div
+              </button>
+              <button
                 onClick={() => downloadHandler()}
                 className="inline-flex items-center gap-x-1.5 rounded-md bg-[#129483ff] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
@@ -126,7 +147,7 @@ const Index: NextPageWithLayout<PageProps> = ({ generated_serial_numbers }) => {
                   />
                 </svg>
                 Export CSV
-              </div>
+              </button>
             </div>
           </div>
           <div>
@@ -169,7 +190,21 @@ const Index: NextPageWithLayout<PageProps> = ({ generated_serial_numbers }) => {
           </div>
         </div>
       </div>
-    </div>
+
+      {isClickedEmail ? (
+        <FormAlert
+          title="Share to email"
+          description="Enter email to share file"
+          actionHandler={async (email: string) =>
+            await sendEmail({ to: email })
+          }
+          rejectHandler={() => setIsClickedEmail((prevValue) => !prevValue)}
+          labelAction="Submit"
+          labelReject="Cancel"
+          show={isClickedEmail}
+        />
+      ) : null}
+    </>
   );
 };
 
