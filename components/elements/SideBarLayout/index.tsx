@@ -17,28 +17,28 @@ import Session from "supertokens-web-js/recipe/session";
 import { useRouter } from "next/router";
 
 const navigation = [
-  { name: "DASHBOARD", href: "/", icon: HomeIcon, current: true },
-  { name: "PRODUCT", href: "/products", icon: CalendarIcon, current: false },
+  { name: "Dashboard", href: "/", icon: HomeIcon, current: true },
+  { name: "Product", href: "/products", icon: CalendarIcon, current: false },
   {
-    name: "SERIAL NUMBER",
+    name: "Serial Number",
     href: "/serial-numbers",
     icon: DocumentDuplicateIcon,
     current: false,
   },
   {
-    name: "PRODUCT SERIALS",
+    name: "Product Serials",
     href: "/product-serials",
     icon: BookmarkSquareIcon,
     current: false,
   },
   {
-    name: "USERS",
+    name: "Users",
     icon: UsersIcon,
     current: false,
     children: [
-      { name: "TEAM", icon: UsersIcon, href: "/users/teams", current: false },
-      { name: "ROLE", icon: UsersIcon, href: "/users/roles", current: false },
-      { name: "USER", icon: UsersIcon, href: "/users", current: false },
+      { name: "Team", icon: UsersIcon, href: "/users/teams", current: false },
+      { name: "Role", icon: UsersIcon, href: "/users/roles", current: false },
+      { name: "User", icon: UsersIcon, href: "/users", current: false },
     ],
   },
 ];
@@ -250,7 +250,7 @@ export default function SidebarLayout({ children }: any) {
                               className="h-6 w-6 shrink-0 text-gray-400 group-hover:text-indigo-600"
                               aria-hidden="true"
                             />
-                            LOG OUT
+                            Logout
                           </button>
                         </li>
                       </ul>
@@ -391,7 +391,7 @@ export default function SidebarLayout({ children }: any) {
                       className="h-6 w-6 shrink-0 text-red-400 group-hover:text-red-600"
                       aria-hidden="true"
                     />
-                    LOG OUT
+                    Logout
                   </button>
                 </li>
               </ul>

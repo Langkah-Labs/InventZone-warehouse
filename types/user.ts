@@ -1,3 +1,5 @@
+import { Team } from "./team";
+
 export type User = {
   id: string;
   name: string;
@@ -5,6 +7,6 @@ export type User = {
   email: string;
   phone: string;
   username: string;
-  team?: string;
+  team?: Team;
   company: string;
 };
