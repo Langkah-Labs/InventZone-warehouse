@@ -63,6 +63,8 @@ const Index: NextPageWithLayout<PageProps> = ({ users }) => {
     return classes.filter(Boolean).join(" ");
   }
 
+  const deleteUser = (id: string) => {};
+
   return (
     <main className={`${raleway.className}`}>
       <div className="px-4 sm:px-6 lg:px-8">
@@ -99,6 +101,12 @@ const Index: NextPageWithLayout<PageProps> = ({ users }) => {
               <table className="min-w-full divide-y divide-gray-300">
                 <thead>
                   <tr>
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                    >
+                      Team
+                    </th>
                     <th
                       scope="col"
                       className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
@@ -153,6 +161,9 @@ const Index: NextPageWithLayout<PageProps> = ({ users }) => {
                   {users?.map((person, personIdx) => (
                     <tr key={person.id}>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        {person.team?.name}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                         {person.role}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
@@ -187,7 +198,7 @@ const Index: NextPageWithLayout<PageProps> = ({ users }) => {
                         )}
                       >
                         <Link
-                          href={`/products/form/${person.id}`}
+                          href={`/users/form/${person.id}`}
                           className="inline-flex items-center gap-x-1.5 rounded-md bg-[#167AFF] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         >
                           <svg
@@ -206,7 +217,7 @@ const Index: NextPageWithLayout<PageProps> = ({ users }) => {
                           </svg>
                         </Link>
                         <button
-                          // onClick={() => deleteProduct(person.id)}
+                          onClick={() => deleteUser(person.id)}
                           className="inline-flex items-center gap-x-1.5 ml-2 rounded-md bg-[#C23A3A] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         >
                           <svg
