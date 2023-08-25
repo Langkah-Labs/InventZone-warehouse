@@ -4,8 +4,8 @@ import { useRouter } from "next/router";
 import { Raleway } from "next/font/google";
 import type { NextPageWithLayout } from "../../_app";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { graphqlRequest } from "@/utils/graphql";
 import swal from "sweetalert";
+import { graphqlRequest } from "@/utils/graphql";
 import SidebarLayout from "@/components/elements/SideBarLayout";
 import Loading from "@/components/elements/Loading";
 import { ProductInput } from "@/types/product";
@@ -13,10 +13,11 @@ import { ProductInput } from "@/types/product";
 const raleway = Raleway({ subsets: ["latin"] });
 
 const insertProductMutation = `
-  mutation InsertProductMutation($name: String!, $description: String!) {
-    insert_products_one(object: {name: $name, description: $description}) {
+  mutation InsertProductMutation($name: String!, $description: String!, $shorten_name: String!) {
+    insert_products_one(object: {name: $name, description: $description, shorten_name: $shorten_name}) {
       id
       name
+      shorten_name
       description
       created_at
       updated_at
@@ -49,6 +50,15 @@ const Products: NextPageWithLayout = () => {
       });
     } catch (err) {
       console.error(err);
+      swal({
+        title: "Failed!",
+        text: "Oops, something went wrong",
+        icon: "error",
+      }).then(() => {
+        if (router.isReady) {
+          router.push("/products");
+        }
+      });
     }
   };
 
@@ -82,9 +92,34 @@ const Products: NextPageWithLayout = () => {
                       id="name"
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                       defaultValue={""}
+                      required
                       {...register("name")}
                     />
                     {/* <p className="mt-3 text-sm leading-6 text-gray-600">{hint}</p> */}
+                  </div>
+                </div>
+
+                <div className="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
+                  <label
+                    htmlFor="shorten-name"
+                    className="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5"
+                  >
+                    Shorten Name
+                    <span className="text-[#C23A3A]">*</span>
+                  </label>
+                  <div className="mt-2 sm:col-span-2 sm:mt-0">
+                    <input
+                      type="text"
+                      id="shorten-name"
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                      defaultValue={""}
+                      required
+                      {...register("shorten_name")}
+                    />
+                    <p className="mt-3 text-sm leading-6 text-gray-600">
+                      ex: &quot;Optical Distribution Point&quot; &gt;
+                      &quot;ODP&quot;
+                    </p>
                   </div>
                 </div>
 

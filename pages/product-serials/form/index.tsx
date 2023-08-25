@@ -19,6 +19,7 @@ const findAllProductsQuery = `
     products {
       id
       name
+      shorten_name
       created_at
       updated_at
     }
@@ -81,7 +82,10 @@ const SerialProducts: NextPageWithLayout<PageProps> = ({ products }) => {
 
     try {
       setIsLoading(true);
-      await graphqlRequest.request(insertProductSerialMutation, data);
+      await graphqlRequest.request(insertProductSerialMutation, {
+        ...data,
+        capacity: data.capacity !== 0 ? 0 : data.capacity,
+      });
 
       swal({
         title: "Success!",
@@ -92,6 +96,15 @@ const SerialProducts: NextPageWithLayout<PageProps> = ({ products }) => {
       });
     } catch (err) {
       console.error(err);
+      swal({
+        title: "Failed!",
+        text: "Oops, something went wrong",
+        icon: "error",
+      }).then(() => {
+        if (router.isReady) {
+          router.push("/product-serials");
+        }
+      });
     }
   };
   return (
@@ -126,6 +139,7 @@ const SerialProducts: NextPageWithLayout<PageProps> = ({ products }) => {
                       defaultValue={""}
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                       {...register("serial_number")}
+                      required
                     />
                   </div>
                 </div>
@@ -144,10 +158,12 @@ const SerialProducts: NextPageWithLayout<PageProps> = ({ products }) => {
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                       defaultValue=""
                       {...register("product_id")}
+                      required
                     >
+                      <option value="">Choose One</option>
                       {products?.map((item: any, i: number) => (
                         <option value={item.id} key={i}>
-                          {item.name}
+                          {item.name}&nbsp;-&nbsp;({item.shorten_name})
                         </option>
                       ))}
                     </select>
@@ -163,7 +179,7 @@ const SerialProducts: NextPageWithLayout<PageProps> = ({ products }) => {
                   </label>
                   <div className="mt-2 sm:col-span-2 sm:mt-0">
                     <input
-                      type="text"
+                      type="number"
                       id="capacity"
                       defaultValue={0}
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
