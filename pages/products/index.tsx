@@ -79,6 +79,7 @@ const Products: NextPageWithLayout<PageProps> = ({ products }) => {
       icon: "warning",
       buttons: ["Cancel", "Yes"],
       dangerMode: true,
+      closeOnClickOutside: false,
     }).then(async (willDelete) => {
       if (willDelete) {
         try {
@@ -119,7 +120,7 @@ const Products: NextPageWithLayout<PageProps> = ({ products }) => {
             </div>
             <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex items-center gap-2">
               <div>
-                <div className="relative rounded-md shadow-sm">
+                <div className="relative rounded-md shadow-sm font-sans">
                   <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -175,7 +176,7 @@ const Products: NextPageWithLayout<PageProps> = ({ products }) => {
             <div className="mt-8 flow-root">
               <div className="-mx-4 -my-2 sm:-mx-6 lg:-mx-8">
                 <div className="inline-block min-w-full py-2 align-middle">
-                  <table className="min-w-full border-separate border-spacing-0">
+                  <table className="min-w-full border-separate border-spacing-0 font-sans">
                     <thead>
                       <tr>
                         <th

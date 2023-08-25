@@ -142,6 +142,7 @@ const SerialProducts: NextPageWithLayout<PageProps> = ({
         title: "Success!",
         text: "Your data has been saved!",
         icon: "success",
+        closeOnClickOutside: false,
       }).then(() => {
         if (router.isReady) {
           router.push("/product-serials");
@@ -153,6 +154,7 @@ const SerialProducts: NextPageWithLayout<PageProps> = ({
         title: "Failed!",
         text: "Oops, something went wrong",
         icon: "error",
+        closeOnClickOutside: false,
       }).then(() => {
         if (router.isReady) {
           router.push("/product-serials");
@@ -181,7 +183,7 @@ const SerialProducts: NextPageWithLayout<PageProps> = ({
                 the system.
               </p>
 
-              <div className="mt-10 space-y-8 border-b border-gray-900/10 pb-12 sm:space-y-0 sm:divide-y sm:divide-gray-900/10 sm:border-t sm:pb-0">
+              <div className="font-sans mt-10 space-y-8 border-b border-gray-900/10 pb-12 sm:space-y-0 sm:divide-y sm:divide-gray-900/10 sm:border-t sm:pb-0">
                 <div className="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
                   <label
                     htmlFor="serial-number"

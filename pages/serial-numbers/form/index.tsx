@@ -84,6 +84,7 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({ products }) => {
         title: "Success!",
         text: "Your data has been saved!",
         icon: "success",
+        closeOnClickOutside: false,
       }).then(() => {
         router.push("/serial-numbers");
       });
@@ -93,6 +94,7 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({ products }) => {
         title: "Failed!",
         text: "Oops, something went wrong",
         icon: "error",
+        closeOnClickOutside: false,
       }).then(() => {
         if (router.isReady) {
           router.push("/serial-numbers");
@@ -117,7 +119,7 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({ products }) => {
                 the system.
               </p>
 
-              <div className="mt-10 space-y-8 border-b border-gray-900/10 pb-12 sm:space-y-0 sm:divide-y sm:divide-gray-900/10 sm:border-t sm:pb-0">
+              <div className="font-sans mt-10 space-y-8 border-b border-gray-900/10 pb-12 sm:space-y-0 sm:divide-y sm:divide-gray-900/10 sm:border-t sm:pb-0">
                 <div className="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
                   <label
                     htmlFor="productOrderId"
@@ -191,7 +193,7 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({ products }) => {
                   </label>
                   <div className="mt-2 sm:col-span-2 sm:mt-0">
                     <input
-                      type="text"
+                      type="number"
                       id="quantity"
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                       {...register("quantity")}

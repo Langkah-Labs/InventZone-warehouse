@@ -6,6 +6,7 @@ import { Raleway } from "next/font/google";
 import type { NextPageWithLayout } from "../_app";
 import swal from "sweetalert";
 import { graphqlRequest } from "@/utils/graphql";
+import { randomSerialNumber } from "@/utils/constants";
 import SidebarLayout from "@/components/elements/SideBarLayout";
 import ConfirmAlert from "@/components/elements/Modals/ConfirmationAlert";
 import InfoAlert from "@/components/elements/Modals/InfoAlert";
@@ -27,6 +28,7 @@ const findAllSerialNumbersQuery = `
       created_at
       updated_at
       status
+      verification
       product {
         name
         shorten_name
@@ -76,6 +78,22 @@ const updateSerialNumberByIdMutation = `
       created_at
       updated_at
       status
+      verification
+    }
+  }
+`;
+
+const updateVerificationByIdMutation = `
+  mutation UpdateSerialNumberById($id: bigint!, $verification: Boolean!) {
+    update_serial_numbers_by_pk(pk_columns: {id: $id}, _set: {verification: $verification}) {
+      id
+      product_name
+      product_order_id
+      quantity
+      created_at
+      updated_at
+      status
+      verification
     }
   }
 `;
@@ -117,15 +135,45 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({ serialNumbers }) => {
   const [isClickedEmail, setIsClickedEmail] = useState(false);
   const [isClickedSuccess, setIsClickedSuccess] = useState(false);
 
-  const clickVerificationHandler = () => {
-    setIsClickedVerification(!isClickedVerification);
+  const verificationHandler = (id: string) => {
+    swal({
+      title: "Data Verification",
+      text: "If you verified the data, your verification will be sent to vendor and the data status will be verified",
+      icon: "warning",
+      buttons: ["No, maybe later", "Yes,I want to verified"],
+      dangerMode: false,
+      closeOnClickOutside: false,
+    }).then(async (willDelete) => {
+      if (willDelete) {
+        try {
+          setIsLoading(true);
+          const res = await graphqlRequest.request<any>(
+            updateVerificationByIdMutation,
+            {
+              verification: true,
+              id,
+            }
+          );
+          if (res) {
+            swal({
+              title: "Good job!",
+              text: "Data is verified!",
+              icon: "success",
+              buttons: ["Okay"],
+            }).then(() => {
+              router.reload();
+            });
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      } else {
+        swal("It's okay, you can do it later");
+      }
+    });
   };
 
-  const clickGenerateHandler = async (
-    id: string,
-    name: string,
-    qty: number
-  ) => {
+  const generateHandler = async (id: string, name: string, qty: number) => {
     setIsLoading(true);
     // Get the company name
     const serialNumber = randomSerialNumber(name, "KDK", qty);
@@ -151,6 +199,7 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({ serialNumbers }) => {
           title: "Failed!",
           text: "Oops, something went wrong",
           icon: "error",
+          closeOnClickOutside: false,
         }).then(() => {
           if (router.isReady) {
             router.push("/serial-numbers");
@@ -163,41 +212,6 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({ serialNumbers }) => {
       setIsLoading(false);
       setIsClickedGenerate(!isClickedGenerate);
     }
-  };
-
-  const randomSerialNumber = (name: string, id: string, qty: number) => {
-    let randomNumber = "";
-    let result = [];
-    const integers = "0123456789";
-
-    // Get length for loop
-    var charactersLength = integers.length;
-
-    // Loop for total number of integers object
-    for (let j = 0; j < qty; j++) {
-      // Loop for total number of character each integers object
-      randomNumber = "";
-      for (let i = 0; i < 8; i++) {
-        // Get character
-        randomNumber += integers.charAt(
-          Math.floor(Math.random() * charactersLength)
-        );
-      }
-
-      // Get Date
-      const today = new Date();
-      const dd = String(today.getDate()).padStart(2, "0");
-      const mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
-      const yyyy = today.getFullYear();
-      const dateNow = dd + mm + yyyy;
-
-      // Generate serial number
-      const SN = name + id + randomNumber + dateNow;
-
-      // Collect serial number to array
-      result.push(SN);
-    }
-    return result;
   };
 
   const clickEmailHandler = () => {
@@ -217,6 +231,7 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({ serialNumbers }) => {
       icon: "warning",
       buttons: ["Cancel", "Yes"],
       dangerMode: true,
+      closeOnClickOutside: false,
     }).then(async (willDelete) => {
       if (willDelete) {
         try {
@@ -257,7 +272,7 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({ serialNumbers }) => {
             </div>
             <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex items-center gap-2">
               <div>
-                <div className="relative rounded-md shadow-sm">
+                <div className="relative rounded-md shadow-sm font-sans">
                   <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -313,7 +328,7 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({ serialNumbers }) => {
             <div className="mt-8 flow-root">
               <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                  <table className="min-w-full divide-y divide-gray-300">
+                  <table className="min-w-full divide-y divide-gray-300 font-sans">
                     <thead>
                       <tr>
                         <th
@@ -400,45 +415,59 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({ serialNumbers }) => {
                                   />
                                 </svg>
                               </button>
-                              <div
-                                className="cursor-pointer inline-flex items-center gap-x-1.5 ml-2 rounded-md bg-[#129483ff] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                                data-te-toggle="tooltip"
-                                title="Verify Data"
-                                onClick={() => clickVerificationHandler()}
-                              >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  strokeWidth={1.5}
-                                  stroke="currentColor"
-                                  className="w-6 h-6"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"
-                                  />
-                                </svg>
+                              {!serialNumber.verification ? (
                                 <div
-                                  id="tooltip-default"
-                                  role="tooltip"
-                                  className="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700"
+                                  className="cursor-pointer inline-flex items-center gap-x-1.5 ml-2 rounded-md bg-[#129483ff] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                  data-te-toggle="tooltip"
+                                  title="Verify Data"
+                                  onClick={() =>
+                                    verificationHandler(serialNumber.id)
+                                  }
                                 >
-                                  Tooltip content
-                                  <div
-                                    className="tooltip-arrow"
-                                    data-popper-arrow
-                                  ></div>
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={1.5}
+                                    stroke="currentColor"
+                                    className="w-6 h-6"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"
+                                    />
+                                  </svg>
                                 </div>
-                              </div>
-                              {!serialNumber.status && (
+                              ) : (
+                                <div
+                                  className="inline-flex items-center gap-x-1.5 ml-2 rounded-md bg-gray-400 px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                  data-te-toggle="tooltip"
+                                  title="Data Verified"
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={1.5}
+                                    stroke="currentColor"
+                                    className="w-6 h-6"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"
+                                    />
+                                  </svg>
+                                </div>
+                              )}
+                              {!serialNumber.status ? (
                                 <div
                                   className="cursor-pointer inline-flex items-center gap-x-1.5 ml-2 rounded-md bg-[#718096ff] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                   data-te-toggle="tooltip"
                                   title="Generate Serial Number"
                                   onClick={() =>
-                                    clickGenerateHandler(
+                                    generateHandler(
                                       serialNumber.id,
                                       serialNumber.product.shorten_name,
                                       Number(serialNumber.quantity)
@@ -460,6 +489,33 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({ serialNumbers }) => {
                                     />
                                   </svg>
                                 </div>
+                              ) : (
+                                <Link
+                                  href={`/serial-numbers/detail/${serialNumber.id}`}
+                                  className="cursor-pointer inline-flex items-center gap-x-1.5 ml-2 rounded-md bg-[#FFD335] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                  data-te-toggle="tooltip"
+                                  title="View Generate Serial Number"
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={1.5}
+                                    stroke="currentColor"
+                                    className="w-6 h-6"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                                    />
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                    />
+                                  </svg>
+                                </Link>
                               )}
                             </td>
                           </tr>
@@ -469,22 +525,12 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({ serialNumbers }) => {
                 </div>
               </div>
             </div>
-            {isClickedVerification ? (
-              <ConfirmAlert
-                title="Data Verification"
-                description="If you verified the data, your verification will be sent to vendor and the data status will be verified"
-                labelAccept="Yes,I want to verified"
-                labelReject="No, maybe later"
-              />
-            ) : (
-              <></>
-            )}
             {isClickedGenerate ? (
               <InfoAlert
                 title="Generate Serial Number"
                 description="Your serial number has been generated!"
                 labelAction1="Share to email"
-                labelAction2="Download File"
+                labelAction2="Export CSV"
                 labelReject="Back"
                 actionHandler1={clickEmailHandler}
                 actionHandler2={clickSuccessHandler}
