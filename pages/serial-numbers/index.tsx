@@ -15,6 +15,11 @@ import SuccessAlert from "@/components/elements/Modals/SuccessAlert";
 import Loading from "@/components/elements/Loading";
 import Seo from "@/components/elements/Seo";
 import { SerialNumber } from "@/types/serial-number";
+import superTokensNode from "supertokens-node";
+import { backendConfig } from "@/config/backendConfig";
+import Session from "supertokens-node/recipe/session";
+import EmailPassword from "supertokens-node/recipe/emailpassword";
+import { User } from "@/types/user";
 
 const raleway = Raleway({ subsets: ["latin"] });
 
@@ -99,12 +104,51 @@ const updateVerificationByIdMutation = `
   }
 `;
 
+const findUserByEmailQuery = `
+  query FindUserByEmail($email: String!) {
+    users(where: {email: {_eq: $email}}) {
+      id
+      name
+      role
+      email
+      phone
+      username
+      company
+    }
+  }
+`;
+
 type PageProps = {
   serialNumbers: Array<SerialNumber>;
+  user: User;
 };
 
-export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
+export const getServerSideProps: GetServerSideProps<PageProps> = async (
+  ctx
+) => {
+  superTokensNode.init(backendConfig());
+
+  let session;
+  let user;
+
   try {
+    session = await Session.getSession(ctx.req, ctx.res, {
+      overrideGlobalClaimValidators: () => {
+        return [];
+      },
+    });
+    const userInfo = await EmailPassword.getUserById(session!.getUserId());
+    if (userInfo) {
+      const userResult = await graphqlRequest.request<any>(
+        findUserByEmailQuery,
+        {
+          email: userInfo.email,
+        }
+      );
+
+      user = userResult["users"][0];
+    }
+
     const result = await graphqlRequest.request<any>(
       findAllSerialNumbersQuery,
       {}
@@ -113,6 +157,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
     return {
       props: {
         serialNumbers: result["serial_numbers"],
+        user,
       },
     };
   } catch (err) {
@@ -121,12 +166,16 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
     return {
       props: {
         serialNumbers: [],
+        user: {},
       },
     };
   }
 };
 
-const SerialNumbers: NextPageWithLayout<PageProps> = ({ serialNumbers }) => {
+const SerialNumbers: NextPageWithLayout<PageProps> = ({
+  serialNumbers,
+  user,
+}) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [searchValue, setSearchValue] = useState("");
@@ -176,8 +225,9 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({ serialNumbers }) => {
 
   const generateHandler = async (id: string, name: string, qty: number) => {
     setIsLoading(true);
-    // Get the company name
-    const serialNumber = randomSerialNumber(name, "KDK", qty);
+
+    const company = user?.company;
+    const serialNumber = randomSerialNumber(name, company, qty);
     setGenerateValue(serialNumber);
 
     // for (let i = 0; i < qty; i++) {
@@ -549,7 +599,11 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({ serialNumbers }) => {
                   description="Enter email to send the serial number file"
                   labelAction="Send email"
                   labelReject="Back"
-                  actionHandler1={clickSuccessHandler}
+                  actionHandler={clickSuccessHandler}
+                  rejectHandler={() =>
+                    setIsClickedEmail((prevValue) => !prevValue)
+                  }
+                  show={isClickedEmail}
                 />
               ) : (
                 <></>
