@@ -258,8 +258,6 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({
         setIsClickedGenerate((prevValue) => !prevValue);
       }
     } catch (err) {
-      console.error(err);
-
       swal({
         title: "Failed!",
         text: "Oops, something went wrong",
