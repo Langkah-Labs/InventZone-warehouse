@@ -118,6 +118,16 @@ const findUserByEmailQuery = `
   }
 `;
 
+const insertGeneratedSerialNumbersMutation = `
+  mutation InsertGeneratedSerialNumbers($objects: [generated_serial_numbers_insert_input!]!) {
+    insert_generated_serial_numbers(objects: $objects) {
+      returning {
+        id
+      }
+    }
+  }
+`;
+
 type PageProps = {
   serialNumbers: Array<SerialNumber>;
   user: User;
@@ -224,44 +234,40 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({
   };
 
   const generateHandler = async (id: string, name: string, qty: number) => {
+    if (!router.isReady) return;
+
     setIsLoading(true);
 
     const company = user?.company;
-    const serialNumber = randomSerialNumber(name, company, qty);
-    setGenerateValue(serialNumber);
+    const serialNumbers = randomSerialNumber(name, company, qty);
+    setGenerateValue(serialNumbers);
 
-    // for (let i = 0; i < qty; i++) {
-    //   try {
-    //     setIsLoading(true);
-    //     await graphqlRequest.request(insertGeneratedSerialNumbers, {
-    //       serial_number_id: id,
-    //       code: serialNumber[i],
-    //       // Get the user name
-    //       created_by: "me",
-    //     });
+    try {
+      const objects = serialNumbers.map((serialNumber) => ({
+        code: serialNumber,
+        serial_number_id: id,
+        created_by: user?.id,
+      }));
 
-    //     await graphqlRequest.request(updateSerialNumberByIdMutation, {
-    //       status: true,
-    //       id,
-    //     });
-    //   } catch (err) {
-    //     console.error(err);
-    //     swal({
-    //       title: "Failed!",
-    //       text: "Oops, something went wrong",
-    //       icon: "error",
-    //       closeOnClickOutside: false,
-    //     }).then(() => {
-    //       if (router.isReady) {
-    //         router.push("/serial-numbers");
-    //       }
-    //     });
-    //   }
-    // }
+      await graphqlRequest.request<any>(insertGeneratedSerialNumbersMutation, {
+        objects: objects,
+      });
 
-    if (serialNumber) {
-      setIsLoading(false);
-      setIsClickedGenerate(!isClickedGenerate);
+      if (serialNumbers) {
+        setIsLoading(false);
+        setIsClickedGenerate((prevValue) => !prevValue);
+      }
+    } catch (err) {
+      console.error(err);
+
+      swal({
+        title: "Failed!",
+        text: "Oops, something went wrong",
+        icon: "error",
+        closeOnClickOutside: false,
+      }).then(() => {
+        router.reload();
+      });
     }
   };
 
