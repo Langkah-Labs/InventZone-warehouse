@@ -412,7 +412,7 @@ export default function SidebarLayout({ children }: any) {
 
             {/* Profile dropdown */}
             <Menu as="div" className="relative">
-              <Menu.Button className="-m-1.5 flex items-center p-1.5">
+              {/* <Menu.Button className="-m-1.5 flex items-center p-1.5">
                 <span className="sr-only">Open user menu</span>
                 <img
                   className="h-8 w-8 rounded-full bg-gray-50"
@@ -431,7 +431,7 @@ export default function SidebarLayout({ children }: any) {
                     aria-hidden="true"
                   />
                 </span>
-              </Menu.Button>
+              </Menu.Button> */}
               <Transition
                 as={Fragment}
                 enter="transition ease-out duration-100"

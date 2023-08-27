@@ -1,10 +1,11 @@
-import Link from "next/link";
-import SidebarLayout from "@/components/elements/SideBarLayout";
-import { Raleway } from "next/font/google";
 import { ReactElement } from "react";
-import type { NextPageWithLayout } from "../../_app";
-import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import Link from "next/link";
 import { useRouter } from "next/router";
+import { Raleway } from "next/font/google";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import swal from "sweetalert";
+import type { NextPageWithLayout } from "../../_app";
+import SidebarLayout from "@/components/elements/SideBarLayout";
 
 const raleway = Raleway({ subsets: ["latin"] });
 
@@ -36,9 +37,23 @@ const CreateRole: NextPageWithLayout = () => {
 
     const body = await response.json();
     if (body.status === "OK" && body.createdNewRole) {
-      router.push("/users/roles");
+      swal({
+        title: "Success!",
+        text: "Your data has been saved!",
+        icon: "success",
+      }).then(() => {
+        router.push("/users/roles");
+      });
     } else {
-      window.alert("Failed to create new role");
+      swal({
+        title: "Failed!",
+        text: "Oops, something went wrong",
+        icon: "error",
+      }).then(() => {
+        if (router.isReady) {
+          router.push("/users/roles");
+        }
+      });
     }
   };
 
@@ -47,9 +62,7 @@ const CreateRole: NextPageWithLayout = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="space-y-12 sm:space-y-16">
           <div>
-            <h2 className="body-4large-bold leading-7 text-[#113A5D]">
-              Input Role
-            </h2>
+            <h2 className="body-4large-bold leading-7 text-[#113A5D]">Role</h2>
             <p className="mt-2 max-w-2xl leading-6 body-base-regular text-gray-400">
               Role data entry form. This form provides information from the role
               name and description.
@@ -70,6 +83,7 @@ const CreateRole: NextPageWithLayout = () => {
                     id="role"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                     defaultValue={""}
+                    required
                     {...register("role")}
                   />
                 </div>
@@ -176,7 +190,7 @@ const CreateRole: NextPageWithLayout = () => {
 
         <div className="mt-6 flex items-center justify-end gap-x-6">
           <Link
-            href="/products"
+            href="/users/roles/"
             className="text-sm font-semibold leading-6 text-gray-900"
           >
             Cancel

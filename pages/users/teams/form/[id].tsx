@@ -116,14 +116,14 @@ const Teams: NextPageWithLayout<PageProps> = ({ team }) => {
           <div className="space-y-12 sm:space-y-16">
             <div>
               <h2 className="body-4large-bold leading-7 text-[#113A5D]">
-                Input Team
+                Team
               </h2>
               <p className="mt-2 max-w-2xl leading-6 body-base-regular text-gray-400">
                 Team data entry form. This form provides information from the
                 team name.
               </p>
 
-              <div className="mt-10 space-y-8 border-b border-gray-900/10 pb-12 sm:space-y-0 sm:divide-y sm:divide-gray-900/10 sm:border-t sm:pb-0">
+              <div className="font-sans mt-10 space-y-8 border-b border-gray-900/10 pb-12 sm:space-y-0 sm:divide-y sm:divide-gray-900/10 sm:border-t sm:pb-0">
                 <div className="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
                   <label
                     htmlFor="name"
@@ -154,7 +154,7 @@ const Teams: NextPageWithLayout<PageProps> = ({ team }) => {
 
           <div className="mt-6 flex items-center justify-end gap-x-6">
             <Link
-              href="/products"
+              href="/users/teams/"
               className="text-sm font-semibold leading-6 text-gray-900"
             >
               Cancel
