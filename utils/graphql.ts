@@ -1,11 +1,9 @@
 import { GraphQLClient } from "graphql-request";
 
-// TODO: save graphql endpoint url to env vars
-const GRAPHQL_BASE_URL = "http://191.96.57.242:8080/v1/graphql";
+const GRAPHQL_BASE_URL = process.env.GRAPHQL_ENDPOINT || "";
 
-// TODO: save static token to env vars
 const requestHeaders = {
-  "x-hasura-admin-secret": "InventZone_2023",
+  "x-hasura-admin-secret": process.env.GRAPHQL_ADMIN_SECRET || "",
 };
 
 const graphqlRequest = new GraphQLClient(GRAPHQL_BASE_URL, {

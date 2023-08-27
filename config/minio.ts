@@ -1,4 +1,4 @@
-import Minio from "minio";
+import * as Minio from "minio";
 
 export const minioClient = new Minio.Client({
   endPoint: process.env.MINIO_ENDPOINT || "localhost",
