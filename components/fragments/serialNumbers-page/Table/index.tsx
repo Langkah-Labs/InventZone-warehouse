@@ -207,7 +207,9 @@ export default function Index() {
           description="Enter email to send the serial number file"
           labelAction="Send email"
           labelReject="Back"
-          actionHandler1={clickSuccessHandler}
+          actionHandler={clickSuccessHandler}
+          rejectHandler={() => {}}
+          show={false}
         />
       ) : (
         <></>
