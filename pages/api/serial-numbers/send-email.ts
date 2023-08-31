@@ -73,11 +73,7 @@ export default async function handler(
         const minioBucket = process.env.MINIO_BUCKET_NAME || "";
         const filename = `serial_numbers_${to}_${dayjs().unix()}.csv`;
         const minioFilePath = `generated_serial_numbers/${filename}`;
-        const uploadInfo = await minioClient.fPutObject(
-          minioBucket,
-          minioFilePath,
-          tempFilePath
-        );
+        await minioClient.fPutObject(minioBucket, minioFilePath, tempFilePath);
 
         // store the file path to serial numbers table
         await graphqlRequest.request<any>(insertSerialNumberMutation, {
@@ -99,11 +95,13 @@ export default async function handler(
           console.log(`file ${tempFilePath} not found!`);
         }
 
-        const fileUrl = `${host}/api/files/${minioFilePath}`;
+        const fileUrl = `http://${host}/api/files/${minioFilePath}`;
+        console.log(fileUrl);
         // send email to recipient using nodemailer
         await sendMail({
           to,
-          subject: "Test send email",
+          // TODO: change the email subject
+          subject: "Here's your generated serial number",
           Template: Email,
           props: {
             fileUrl,

@@ -417,7 +417,7 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({
                       <tbody className="divide-y divide-gray-200">
                         {serialNumbers
                           .filter((item: any) =>
-                            item.product.name
+                            item?.product?.name
                               .toLowerCase()
                               .includes(searchValue)
                           )
@@ -594,9 +594,7 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({
                   actionHandler1={clickEmailHandler}
                   actionHandler2={clickSuccessHandler}
                 />
-              ) : (
-                <></>
-              )}
+              ) : null}
               {isClickedEmail ? (
                 <FormAlert
                   title="Share to email"
@@ -609,18 +607,14 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({
                   }
                   show={isClickedEmail}
                 />
-              ) : (
-                <></>
-              )}
+              ) : null}
               {isClickedSuccess ? (
                 <SuccessAlert
                   title="Success!"
                   description="You got your own serial number!"
                   labelReject="Back"
                 />
-              ) : (
-                <></>
-              )}
+              ) : null}
             </div>
           </div>
         )}
