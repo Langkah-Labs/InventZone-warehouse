@@ -224,13 +224,13 @@ const Home: NextPageWithLayout<PageProps> = ({
                       </p>
                       <div className="absolute inset-x-0 bottom-0 bg-gray-50 px-4 py-4 sm:px-6">
                         <div className="text-sm">
-                          <a
-                            href="#"
+                          <Link
+                            href={item.url}
                             className="font-medium text-[#113A5D] hover:text-indigo-500"
                           >
                             View all
                             <span className="sr-only"> {item.name} stats</span>
-                          </a>
+                          </Link>
                         </div>
                       </div>
                     </dd>
