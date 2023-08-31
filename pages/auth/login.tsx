@@ -126,7 +126,7 @@ export default function Login() {
             Log in your account
           </h2>
 
-          <div className="mt-10">
+          <div className="mt-10 font-sans">
             <div>
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div className="mt-2">
@@ -161,6 +161,7 @@ export default function Login() {
                       className="block w-full bg-[#4F5C6233] rounded-md border-0 py-5 pl-14 pr-12 text-[#40404099] placeholder:text-[#40404099] focus:ring-2 focus:ring-inset focus:[#4F99FF] sm:text-sm sm:leading-6"
                       placeholder="you@example.com"
                       aria-describedby="email"
+                      required
                       {...register("email")}
                     />
                   </div>
@@ -190,6 +191,7 @@ export default function Login() {
                       className="block w-full bg-[#4F5C6233] rounded-md border-0 py-5 pl-14 pr-12 text-[#40404099] placeholder:text-[#40404099] focus:ring-2 focus:ring-inset focus:ring-[#4F99FF] sm:text-sm sm:leading-6"
                       placeholder="at least 8 characters"
                       aria-describedby="password"
+                      required
                       {...register("password")}
                     />
                     <button
@@ -212,15 +214,15 @@ export default function Login() {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="text-sm leading-6">
+                <div className="flex items-center justify-end">
+                  {/* <div className="text-sm leading-6">
                     <Link
                       href="/users/forgot-password"
                       className="font-semibold text-[#4F99FF] hover:underline"
                     >
                       Forgot password?
                     </Link>
-                  </div>
+                  </div> */}
 
                   <button
                     type="submit"
