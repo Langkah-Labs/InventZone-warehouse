@@ -422,20 +422,20 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({
                               .includes(searchValue)
                           )
                           .map((serialNumber) => (
-                            <tr key={serialNumber.id}>
+                            <tr key={serialNumber?.id}>
                               <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-                                {serialNumber.product_order_id}
+                                {serialNumber?.product_order_id}
                               </td>
                               <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-                                {serialNumber.product.name}&nbsp;-&nbsp;(
-                                {serialNumber.product.shorten_name})
+                                {serialNumber?.product?.name}&nbsp;-&nbsp;(
+                                {serialNumber?.product?.shorten_name})
                               </td>
                               <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-                                {serialNumber.quantity}
+                                {serialNumber?.quantity}
                               </td>
                               <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                                 <Link
-                                  href={`/serial-numbers/form/${serialNumber.id}`}
+                                  href={`/serial-numbers/form/${serialNumber?.id}`}
                                   className="inline-flex items-center gap-x-1.5 rounded-md bg-[#167AFF] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                 >
                                   <svg
@@ -455,7 +455,7 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({
                                 </Link>
                                 <button
                                   onClick={() =>
-                                    deleteSerialNumber(serialNumber.id)
+                                    deleteSerialNumber(serialNumber?.id)
                                   }
                                   className="inline-flex items-center gap-x-1.5 ml-2 rounded-md bg-[#C23A3A] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                 >
@@ -474,13 +474,13 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({
                                     />
                                   </svg>
                                 </button>
-                                {!serialNumber.verification ? (
+                                {!serialNumber?.verification ? (
                                   <div
                                     className="cursor-pointer inline-flex items-center gap-x-1.5 ml-2 rounded-md bg-[#129483ff] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                     data-te-toggle="tooltip"
                                     title="Verify Data"
                                     onClick={() =>
-                                      verificationHandler(serialNumber.id)
+                                      verificationHandler(serialNumber?.id)
                                     }
                                   >
                                     <svg
@@ -520,16 +520,16 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({
                                     </svg>
                                   </div>
                                 )}
-                                {!serialNumber.status ? (
+                                {!serialNumber?.status ? (
                                   <div
                                     className="cursor-pointer inline-flex items-center gap-x-1.5 ml-2 rounded-md bg-[#718096ff] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                     data-te-toggle="tooltip"
                                     title="Generate Serial Number"
                                     onClick={() =>
                                       generateHandler(
-                                        serialNumber.id,
-                                        serialNumber.product.shorten_name,
-                                        Number(serialNumber.quantity)
+                                        serialNumber?.id,
+                                        serialNumber?.product?.shorten_name,
+                                        Number(serialNumber?.quantity)
                                       )
                                     }
                                   >
@@ -550,7 +550,7 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({
                                   </div>
                                 ) : (
                                   <Link
-                                    href={`/serial-numbers/detail/${serialNumber.id}?no_po=${serialNumber.product_order_id}`}
+                                    href={`/serial-numbers/detail/${serialNumber?.id}?no_po=${serialNumber?.product_order_id}`}
                                     className="cursor-pointer inline-flex items-center gap-x-1.5 ml-2 rounded-md bg-[#FFD335] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                     data-te-toggle="tooltip"
                                     title="View Generate Serial Number"

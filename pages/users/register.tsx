@@ -103,7 +103,7 @@ export default function Register() {
             Create your account
           </h2>
 
-          <div className="mt-10">
+          <div className="mt-10 font-sans">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div className="mt-2">
                 <div className="relative mt-2 rounded-md shadow-sm">
@@ -129,6 +129,7 @@ export default function Register() {
                     className="block w-full bg-[#4F5C6233] rounded-md border-0 py-5 pl-14 pr-12 text-[#40404099] placeholder:text-[#40404099] focus:ring-2 focus:ring-inset focus:[#4F99FF] sm:text-sm sm:leading-6"
                     placeholder="Company Name"
                     aria-describedby="company"
+                    required
                     {...register("company")}
                   />
                 </div>
@@ -158,6 +159,7 @@ export default function Register() {
                     className="block w-full bg-[#4F5C6233] rounded-md border-0 py-5 pl-14 pr-12 text-[#40404099] placeholder:text-[#40404099] focus:ring-2 focus:ring-inset focus:[#4F99FF] sm:text-sm sm:leading-6"
                     placeholder="Full Name"
                     aria-describedby="name"
+                    required
                     {...register("name")}
                   />
                 </div>
@@ -224,6 +226,7 @@ export default function Register() {
                     className="block w-full bg-[#4F5C6233] rounded-md border-0 py-5 pl-14 pr-12 text-[#40404099] placeholder:text-[#40404099] focus:ring-2 focus:ring-inset focus:[#4F99FF] sm:text-sm sm:leading-6"
                     placeholder="Email"
                     aria-describedby="email"
+                    required
                     {...register("email")}
                   />
                 </div>
@@ -253,6 +256,7 @@ export default function Register() {
                     className="block w-full bg-[#4F5C6233] rounded-md border-0 py-5 pl-14 pr-12 text-[#40404099] placeholder:text-[#40404099] focus:ring-2 focus:ring-inset focus:ring-[#4F99FF] sm:text-sm sm:leading-6"
                     placeholder="Password"
                     aria-describedby="password"
+                    required
                     {...register("password")}
                   />
                   <button
@@ -301,6 +305,7 @@ export default function Register() {
                     className="block w-full bg-[#4F5C6233] rounded-md border-0 py-5 pl-14 pr-12 text-[#40404099] placeholder:text-[#40404099] focus:ring-2 focus:ring-inset focus:ring-[#4F99FF] sm:text-sm sm:leading-6"
                     placeholder="Confirm Password"
                     aria-describedby="passwordConfirmation"
+                    required
                     {...register("passwordConfirmation")}
                   />
                   <button
