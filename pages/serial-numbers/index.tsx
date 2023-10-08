@@ -119,11 +119,18 @@ const findUserByEmailQuery = `
 `;
 
 const insertGeneratedSerialNumbersMutation = `
-  mutation InsertGeneratedSerialNumbers($objects: [generated_serial_numbers_insert_input!]!) {
+  mutation InsertGeneratedSerialNumbers($objects: [generated_serial_numbers_insert_input!]!, $id: bigint!, $status: Boolean!) {
     insert_generated_serial_numbers(objects: $objects) {
       returning {
         id
       }
+    }
+
+    update_serial_numbers_by_pk(pk_columns: {id: $id}, _set: {status: $status}) {
+      id
+      status
+      created_at
+      updated_at
     }
   }
 `;
@@ -251,6 +258,8 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({
 
       await graphqlRequest.request<any>(insertGeneratedSerialNumbersMutation, {
         objects: objects,
+        id,
+        status: true,
       });
 
       if (serialNumbers) {
@@ -258,6 +267,8 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({
         setIsClickedGenerate((prevValue) => !prevValue);
       }
     } catch (err) {
+      console.error(err);
+
       swal({
         title: "Failed!",
         text: "Oops, something went wrong",

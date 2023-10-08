@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "email:dev": "email dev"
+    "email:dev": "email dev",
+    "debug": "NODE_OPTIONS='--inspect' next dev"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.16",
@@ -30,6 +31,7 @@
     "jotai": "^2.3.1",
     "jotai-tanstack-query": "^0.7.1",
     "minio": "^7.1.1",
+    "multiparty": "^4.2.3",
     "next": "13.4.16",
     "nextjs-cors": "^2.1.2",
     "nodemailer": "^6.9.4",
@@ -51,6 +53,7 @@
     "@swc-jotai/react-refresh": "^0.1.0",
     "@tailwindcss/forms": "^0.5.4",
     "@types/express": "^4.17.17",
+    "@types/multiparty": "^0.0.34",
     "@types/node": "20.5.0",
     "@types/nodemailer": "^6.4.9",
     "@types/react": "18.2.20",
