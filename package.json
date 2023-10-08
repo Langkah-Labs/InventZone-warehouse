@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "email:dev": "email dev",
-    "debug": "NODE_OPTIONS='--inspect' next dev"
+    "debug": "NODE_OPTIONS='--inspect' next dev",
+    "docker:build": "docker build -t ghcr.io/langkah-labs/warehouse-app:latest .",
+    "docker:push": "docker push ghcr.io/langkah-labs/warehouse-app:latest"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.16",
