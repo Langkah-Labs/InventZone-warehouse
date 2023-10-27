@@ -214,15 +214,15 @@ export default function Login() {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-end">
-                  {/* <div className="text-sm leading-6">
+                <div className="flex items-center gap-6 justify-end">
+                  <div className="text-sm leading-6">
                     <Link
                       href="/users/forgot-password"
                       className="font-semibold text-[#4F99FF] hover:underline"
                     >
                       Forgot password?
                     </Link>
-                  </div> */}
+                  </div>
 
                   <button
                     type="submit"

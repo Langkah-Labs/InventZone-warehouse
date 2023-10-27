@@ -2,123 +2,144 @@ import { useState } from "react";
 import Link from "next/link";
 import { Raleway } from "next/font/google";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { signUp } from "supertokens-web-js/recipe/emailpassword";
-import TextField from "@/components/elements/TextField";
-import Icon from "@/components/elements/Icon";
+import { sendPasswordResetEmail } from "supertokens-web-js/recipe/emailpassword";
+import swal from "sweetalert";
+import { EnvelopeIcon } from "@heroicons/react/24/outline";
+import { ThreeDots } from "react-loader-spinner";
 
 const raleway = Raleway({ subsets: ["latin"] });
 
-type RegisterInput = {
-  team: string;
-  username: string;
+interface ForgotPasswordInput {
   email: string;
-  password: string;
-  passwordConfirmation: string;
-  phone: string;
-};
+}
 
-export default function Register() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<RegisterInput>();
-  const [passwordVisibility, setPasswordVisibility] = useState({
-    password: false,
-    passwordConfirmation: false,
-  });
+function DotsSpinner() {
+  return (
+    <div className="flex justify-center items-center h-full">
+      <ThreeDots
+        height="24"
+        width="24"
+        color="#ffffff"
+        ariaLabel="three-dots-loading"
+        radius="4"
+        wrapperStyle={{}}
+        wrapperClass=""
+        visible={true}
+      />
+    </div>
+  );
+}
 
-  const onSubmit: SubmitHandler<RegisterInput> = async (data) => {
+export default function ForgotPassword() {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { register, handleSubmit } = useForm<ForgotPasswordInput>();
+
+  const onSubmitResetPassword: SubmitHandler<ForgotPasswordInput> = async (
+    data
+  ) => {
     try {
-      let response = await signUp({
+      setIsLoading(true);
+
+      let response = await sendPasswordResetEmail({
         formFields: [
-          {
-            id: "team",
-            value: data.team,
-          },
-          {
-            id: "username",
-            value: data.username,
-          },
           {
             id: "email",
             value: data.email,
           },
-          {
-            id: "password",
-            value: data.password,
-          },
-          {
-            id: "phone",
-            value: data.phone,
-          },
         ],
       });
 
-      if (response.status === "FIELD_ERROR") {
-        // one of the input formFields failed validaiton
-        response.formFields.forEach((formField) => {
-          if (formField.id === "email") {
-            // Email validation failed (for example incorrect email syntax),
-            // or the email is not unique.
-            window.alert(formField.error);
-          } else if (formField.id === "password") {
-            // Password validation failed.
-            // Maybe it didn't match the password strength
-            window.alert(formField.error);
-          }
+      if (response.status === "OK") {
+        swal({
+          title: "Success!",
+          text: "Please check your email for the password reset link",
+          icon: "success",
+        });
+      } else if (response.status === "FIELD_ERROR") {
+        swal({
+          title: "Failed!",
+          text: "Oops, submit form failed please check your fields",
+          icon: "error",
         });
       } else {
-        window.location.href = "/";
+        swal({
+          title: "Failed!",
+          text: "Oops, failed to reset your password",
+          icon: "error",
+        });
       }
-    } catch (err: any) {
-      if (err.isSuperTokensGeneralError === true) {
-        // this may be a custom error message sent from the API by you.
-        window.alert(err.message);
-      } else {
-        window.alert("Oops! Something went wrong.");
-      }
+
+      setIsLoading(false);
+    } catch (err) {
+      console.error(err);
+      setIsLoading(false);
+      swal({
+        title: "Failed!",
+        text: "Oops, something went wrong",
+        icon: "error",
+      });
     }
   };
 
-  const showPassword = (name: string) => {
-    setPasswordVisibility((prevVal: any) => {
-      return {
-        ...prevVal,
-        [name]: !prevVal[name],
-      };
-    });
-  };
-
-  const protectedPassword = (hidden: any) => (hidden ? "text" : "password");
-
   return (
-    <div className={`flex flex-col p-8 ${raleway.className}`}>
-      <Icon />
-      <div className="flex h-full mt-24 items-center justify-center">
-        <div className="flex flex-col gap-8">
-          <div className="text-center">
-            <h2 className="body-4large-bold text-[#113A5D]">
-              Forgot Password?
-            </h2>
-            <h5 className="body-large-regular text-gray-400">
-              No worries, we will sent you reset instructions.
-            </h5>
-          </div>
+    <div className="flex min-h-full flex-1 flex-col justify-center items-center lg:px-8 bg-gray-100 h-screen">
+      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+        <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+          Forgot Password?
+        </h2>
+        <h5 className="body-large-regular text-gray-400 text-center">
+          No worries, we will sent you reset instructions.
+        </h5>
+      </div>
+
+      <div className="mt-8 w-4/12 sm:mx-auto sm:w-full sm:max-w-sm">
+        <form
+          className="space-y-4"
+          onSubmit={handleSubmit(onSubmitResetPassword)}
+        >
           <div>
-            <TextField
-              label="email"
-              name="email"
-              placeholder="example@mail.com"
-              isMail={true}
-            />
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium leading-6 text-gray-900"
+            >
+              Email
+            </label>
+            <div className="relative mt-1 rounded-md shadow-sm">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <EnvelopeIcon
+                  className="h-5 w-5 text-gray-400"
+                  aria-hidden="true"
+                />
+              </div>
+              <input
+                {...register("email")}
+                type="email"
+                id="email"
+                className="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                placeholder="you@example.com"
+              />
+            </div>
           </div>
-          <div className="flex justify-center">
-            <button className="inline-flex w-fit items-center gap-x-1.5 rounded-md bg-[#167AFF] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-              Send Instructions
+
+          <div>
+            <button
+              type="submit"
+              className="flex w-full justify-center rounded-md bg-[#113A5D] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            >
+              {isLoading ? <DotsSpinner /> : "Submit"}
             </button>
           </div>
-        </div>
+        </form>
+
+        <p className="mt-10 text-center text-sm text-gray-500">
+          Have an account?
+          <Link
+            href="/auth/login"
+            className="font-semibold leading-6 text-[#167AFF] hover:opacity-80"
+          >
+            &nbsp;Login
+          </Link>
+        </p>
       </div>
     </div>
   );
