@@ -12,6 +12,10 @@ import { GeneratedSerialNumber } from "@/types/serial-number";
 import FormAlert from "@/components/elements/Modals/FormAlert";
 import Loading from "@/components/elements/Loading";
 import swal from "sweetalert";
+import supertokensNode from "supertokens-node";
+import Session from "supertokens-node/recipe/session";
+import { backendConfig } from "@/config/backendConfig";
+import EmailPassword from "supertokens-node/recipe/emailpassword";
 
 const raleway = Raleway({ subsets: ["latin"] });
 
@@ -28,8 +32,23 @@ const findSerialNumeberByIdQuery = `
   }
 `;
 
+const findUserByEmailQuery = `
+  query FindUserByEmail($email: String!) {
+    users(where: {email: {_eq: $email}}) {
+      id
+      name
+      role
+      email
+      phone
+      username
+      company
+    }
+  }
+`;
+
 type PageProps = {
   generated_serial_numbers?: Array<GeneratedSerialNumber>;
+  user: any;
 };
 
 export const getServerSideProps: GetServerSideProps<PageProps> = async (
@@ -37,7 +56,30 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
 ) => {
   const { id } = ctx.query;
 
+  supertokensNode.init(backendConfig());
+
+  let session;
+  let user;
+
   try {
+    session = await Session.getSession(ctx.req, ctx.res, {
+      overrideGlobalClaimValidators: () => {
+        return [];
+      },
+    });
+    const userInfo = await EmailPassword.getUserById(session!.getUserId());
+
+    if (userInfo) {
+      const userResult = await graphqlRequest.request<any>(
+        findUserByEmailQuery,
+        {
+          email: userInfo.email,
+        }
+      );
+
+      user = userResult["users"][0];
+    }
+
     const resultSelected = await graphqlRequest.request<any>(
       findSerialNumeberByIdQuery,
       {
@@ -48,6 +90,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
     return {
       props: {
         generated_serial_numbers: resultSelected["generated_serial_numbers"],
+        user,
       },
     };
   } catch (err) {
@@ -56,6 +99,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
     return {
       props: {
         products: [],
+        user: {},
       },
     };
   }
@@ -75,7 +119,10 @@ const headers = [
   { label: "Created at", key: "created_at" },
 ];
 
-const Index: NextPageWithLayout<PageProps> = ({ generated_serial_numbers }) => {
+const Index: NextPageWithLayout<PageProps> = ({
+  generated_serial_numbers,
+  user,
+}) => {
   const router = useRouter();
   const { no_po } = router.query;
 
@@ -103,6 +150,7 @@ const Index: NextPageWithLayout<PageProps> = ({ generated_serial_numbers }) => {
         body: JSON.stringify({
           serialNumberId: id,
           to,
+          username: user.name,
         }),
       });
 

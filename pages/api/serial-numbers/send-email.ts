@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { sendMail } from "@/config/mailer";
-import Email from "@/emails";
 import { graphqlRequest } from "@/utils/graphql";
 import { minioClient } from "@/config/minio";
 import { createObjectCsvWriter } from "csv-writer";
@@ -32,7 +31,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === "POST") {
-    const { serialNumberId, to } = req.body;
+    const { serialNumberId, to, username } = req.body;
     const host = req.headers.host || "";
 
     try {
@@ -100,11 +99,11 @@ export default async function handler(
         // send email to recipient using nodemailer
         await sendMail({
           to,
-          // TODO: change the email subject
           subject: "Here's your generated serial number",
-          Template: Email,
+          template: "./emails/generated_serial_numbers_email.html",
           props: {
             fileUrl,
+            username,
           },
         });
 

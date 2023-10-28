@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
-import { render } from "@react-email/render";
+import Handlebars from "handlebars";
+import fsPromises from "node:fs/promises";
 
 export const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
@@ -13,16 +14,18 @@ export const transporter = nodemailer.createTransport({
 export async function sendMail({
   to,
   subject,
-  Template,
+  template,
   props,
 }: {
   to: string;
   subject: string;
-  Template: Function;
+  template: string;
   props: any;
 }) {
   try {
-    const html = render(Template(props));
+    const source = await fsPromises.readFile(template, { encoding: "utf-8" });
+    const emailTemplate = Handlebars.compile(source);
+    const html = emailTemplate(props);
 
     const options = {
       from: process.env.EMAIL_FROM,
