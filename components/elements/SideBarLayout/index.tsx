@@ -10,6 +10,7 @@ import {
   DocumentDuplicateIcon,
   BookmarkSquareIcon,
   ArrowRightOnRectangleIcon,
+  LinkIcon,
 } from "@heroicons/react/24/outline";
 import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { Disclosure } from "@headlessui/react";
@@ -29,6 +30,12 @@ const navigation = [
     name: "Product Serials",
     href: "/product-serials",
     icon: BookmarkSquareIcon,
+    current: false,
+  },
+  {
+    name: "Hardware Connection",
+    href: "/hardware-connection",
+    icon: LinkIcon,
     current: false,
   },
   {
