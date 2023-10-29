@@ -9,6 +9,7 @@ import swal from "sweetalert";
 import SidebarLayout from "@/components/elements/SideBarLayout";
 import Loading from "@/components/elements/Loading";
 import Seo from "@/components/elements/Seo";
+import Header from "@/components/elements/Header";
 import { Product } from "@/types/product";
 
 const raleway = Raleway({ subsets: ["latin"] });
@@ -110,102 +111,52 @@ const Products: NextPageWithLayout<PageProps> = ({ products }) => {
           <Loading />
         ) : (
           <div className="px-4 sm:px-6 lg:px-8">
-            <div className="sm:flex sm:items-center">
-              <div className="sm:flex-auto">
-                <h1 className="body-4large-bold font-semibold leading-6 text-[#113A5D]">
-                  Products
-                </h1>
-                <p className="mt-4 body-base-regular text-gray-400">
-                  This feature aims to provide easy and efficient access in
-                  managing products, including viewing, adding, changing, and
-                  deleting products.
-                </p>
-              </div>
-              <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex items-center gap-2">
-                <div>
-                  <div className="relative rounded-md shadow-sm font-sans">
-                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="w-4 h-4"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-                        />
-                      </svg>
-                    </div>
-                    <input
-                      type="text"
-                      name="search"
-                      id="text"
-                      className="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      placeholder="Search..."
-                      value={searchValue}
-                      onChange={(e) => {
-                        setSearchValue(e.target.value);
-                      }}
-                    />
-                  </div>
-                </div>
-                <Link
-                  href="/products/form"
-                  className="inline-flex items-center gap-x-1.5 rounded-md bg-[#113A5D] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="w-6 h-4"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-                    />
-                  </svg>
-                  Create New
-                </Link>
-              </div>
-            </div>
+            <Header
+              title="Products"
+              desc="This feature aims to provide easy and efficient access in
+              managing products, including viewing, adding, changing, and
+              deleting products."
+              searchValue={searchValue}
+              searchHandler={(props) => setSearchValue(props)}
+              path="/products/form"
+            />
             <div>
               <div className="mt-8 flow-root">
-                <div className="-mx-4 -my-2 sm:-mx-6 lg:-mx-8">
-                  <div className="inline-block min-w-full py-2 align-middle">
+                <div className="-mx-4 -my-2 sm:-mx-6 lg:-mx-8 overflow-x-auto">
+                  <div className="inline-block min-w-full align-middle h-[32rem] overflow-y-scroll scroll-smooth">
                     <table className="min-w-full border-separate border-spacing-0 font-sans">
                       <thead>
                         <tr>
                           <th
                             scope="col"
-                            className="sticky top-0 z-10 border-b border-gray-300 bg-white bg-opacity-75 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter sm:pl-6 lg:pl-8"
+                            className="sticky top-0 z-10 border-b uppercase border-gray-300 bg-white bg-opacity-75 py-3.5 pl-4 pr-3 text-left text-sm font-bold text-gray-900 backdrop-blur backdrop-filter sm:pl-6 lg:pl-8"
                           >
                             Product Name
                           </th>
                           <th
                             scope="col"
-                            className="sticky top-0 z-10 border-b border-gray-300 bg-white bg-opacity-75 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter sm:pl-6 lg:pl-8"
+                            className="sticky top-0 z-10 border-b uppercase border-gray-300 bg-white bg-opacity-75 py-3.5 pl-4 pr-3 text-left text-sm font-bold text-gray-900 backdrop-blur backdrop-filter sm:pl-6 lg:pl-8"
                           >
                             Shorten Name
                           </th>
                           <th
                             scope="col"
-                            className="sticky top-0 z-10 border-b border-gray-300 bg-white bg-opacity-75 py-3.5 pl-3 pr-4 backdrop-blur backdrop-filter sm:pr-6 lg:pr-8"
+                            className="sticky top-0 z-10 border-b uppercase border-gray-300 bg-white bg-opacity-75 py-3.5 pl-4 pr-3 text-left text-sm font-bold text-gray-900 backdrop-blur backdrop-filter sm:pl-6 lg:pl-8"
                           >
-                            <span className="sr-only">Action</span>
+                            <span className="sr-only">Edit</span>
                           </th>
                         </tr>
                       </thead>
                       <tbody>
                         {products
-                          ?.filter((item: any) =>
-                            item.name.toLowerCase().includes(searchValue)
+                          ?.filter(
+                            (item: any) =>
+                              item.name
+                                .toLowerCase()
+                                .includes(searchValue.toLowerCase()) ||
+                              item.shorten_name
+                                .toLowerCase()
+                                .includes(searchValue.toLowerCase())
                           )
                           .map((product: any, productIdx: number) => (
                             <tr key={product.id}>
@@ -214,7 +165,7 @@ const Products: NextPageWithLayout<PageProps> = ({ products }) => {
                                   productIdx !== product.length - 1
                                     ? "border-b border-gray-200"
                                     : "",
-                                  "whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 lg:pl-8"
+                                  "whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-900 sm:pl-6 lg:pl-8"
                                 )}
                               >
                                 {product.name}
@@ -224,7 +175,7 @@ const Products: NextPageWithLayout<PageProps> = ({ products }) => {
                                   productIdx !== product.length - 1
                                     ? "border-b border-gray-200"
                                     : "",
-                                  "whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 lg:pl-8"
+                                  "whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-900 sm:pl-6 lg:pl-8"
                                 )}
                               >
                                 {product.shorten_name}
