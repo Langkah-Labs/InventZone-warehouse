@@ -9,4 +9,5 @@ export type User = {
   username: string;
   team?: Team;
   company: string;
+  serial_numbers_remaining?: number;
 };

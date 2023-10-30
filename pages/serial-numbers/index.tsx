@@ -77,21 +77,6 @@ const insertGeneratedSerialNumbers = `
 }
 `;
 
-const updateSerialNumberByIdMutation = `
-  mutation UpdateSerialNumberById($id: bigint!, $status: Boolean!) {
-    update_serial_numbers_by_pk(pk_columns: {id: $id}, _set: {status: $status}) {
-      id
-      product_name
-      product_order_id
-      quantity
-      created_at
-      updated_at
-      status
-      verification
-    }
-  }
-`;
-
 const updateVerificationByIdMutation = `
   mutation UpdateSerialNumberById($id: bigint!, $verification: Boolean!) {
     update_serial_numbers_by_pk(pk_columns: {id: $id}, _set: {verification: $verification}) {
@@ -117,6 +102,7 @@ const findUserByEmailQuery = `
       phone
       username
       company
+      serial_numbers_remaining
     }
   }
 `;
@@ -127,6 +113,23 @@ const insertGeneratedSerialNumbersMutation = `
       returning {
         id
       }
+    }
+  }
+`;
+
+const decrementSerialNumberCounterMutation = `
+  mutation DecrementSerialNumberCounter($id: bigint!, $serialNumberRemaining: Int!) {
+    update_users_by_pk(pk_columns: {id: $id}, _set: {serial_numbers_remaining: $serialNumberRemaining}) {
+      serial_numbers_remaining
+    }
+  }
+`;
+
+const updateSerialNumberStatusMutation = `
+  mutation UpdateSerialNumberStatus($id: bigint!, $status: Boolean!) {
+    update_serial_numbers_by_pk(pk_columns: {id: $id}, _set: {status: $status}) {
+      id
+      status
     }
   }
 `;
@@ -256,6 +259,24 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({
 
     setIsLoading(true);
 
+    if (user?.role === "demo") {
+      const generationRemaining = user["serial_numbers_remaining"] || 0;
+
+      if (generationRemaining < 1) {
+        swal({
+          title: "Account Limit Exceeded",
+          text: "Oops, the serial number generation for your account has reached its limit",
+          icon: "error",
+          closeOnClickOutside: false,
+        }).then(() => {
+          router.reload();
+          setIsLoading(false);
+        });
+
+        return;
+      }
+    }
+
     const company = user?.company;
     const serialNumbers = randomSerialNumber(name, company, qty);
     setGenerateValue(serialNumbers);
@@ -272,6 +293,25 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({
       });
 
       if (serialNumbers) {
+        if (user?.role === "demo" && user["serial_numbers_remaining"]) {
+          const serialNumberRemaining =
+            user["serial_numbers_remaining"] - serialNumbers.length;
+
+          await graphqlRequest.request<any>(
+            decrementSerialNumberCounterMutation,
+            {
+              id: user?.id,
+              serialNumberRemaining,
+            }
+          );
+        }
+
+        // set status to true in the serial_numbers table
+        await graphqlRequest.request<any>(updateSerialNumberStatusMutation, {
+          id,
+          status: true,
+        });
+
         setIsLoading(false);
         setIsClickedGenerate((prevValue) => !prevValue);
       }
@@ -283,6 +323,7 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({
         closeOnClickOutside: false,
       }).then(() => {
         router.reload();
+        setIsLoading(false);
       });
     }
   };
