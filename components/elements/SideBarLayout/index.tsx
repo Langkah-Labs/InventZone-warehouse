@@ -33,12 +33,6 @@ const navigation = [
     current: false,
   },
   {
-    name: "Hardware Connection",
-    href: "/hardware-connection",
-    icon: LinkIcon,
-    current: false,
-  },
-  {
     name: "Users",
     icon: UsersIcon,
     current: false,
