@@ -11,14 +11,12 @@ interface Props {
 }
 
 export default function index({ headers, children }: Props) {
-  console.log(headers);
-
   return (
     <div className="mt-8 flow-root">
       <div className="-mx-4 -my-2 sm:-mx-6 lg:-mx-8 overflow-x-auto">
         <div className="inline-block min-w-full align-middle h-[32rem] overflow-y-scroll scroll-smooth">
           <table className="min-w-full border-separate border-spacing-0 font-sans">
-            <thead>
+            <thead className="z-0">
               <tr>
                 {headers?.map((item: any) => (
                   <>

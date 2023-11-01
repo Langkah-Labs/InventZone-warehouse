@@ -133,7 +133,7 @@ const SerialProducts: NextPageWithLayout<PageProps> = ({
       if (id) {
         await graphqlRequest.request(updateProductSerialsByIdMutation, {
           ...data,
-          capacity: data.capacity !== 0 ? 0 : data.capacity,
+          capacity: data.capacity !== 0 ? data.capacity : 0,
           id,
         });
       } else {
@@ -166,6 +166,7 @@ const SerialProducts: NextPageWithLayout<PageProps> = ({
 
   useEffect(() => {
     setIsLoading(false);
+    console.log(productSelected?.capacity);
   }, [productSelected]);
 
   return (

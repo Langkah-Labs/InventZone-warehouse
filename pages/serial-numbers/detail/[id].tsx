@@ -217,7 +217,7 @@ const Index: NextPageWithLayout<PageProps> = ({
               <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex items-center gap-2">
                 <button
                   onClick={() => emailHandler()}
-                  className="inline-flex items-center gap-x-1.5 rounded-md bg-yellow-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  className="inline-flex items-center gap-x-1.5 rounded-md bg-[#167AFF] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

@@ -10,7 +10,8 @@ import {
   DocumentDuplicateIcon,
   BookmarkSquareIcon,
   ArrowRightOnRectangleIcon,
-  LinkIcon,
+  UserGroupIcon,
+  TvIcon,
 } from "@heroicons/react/24/outline";
 import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { Disclosure } from "@headlessui/react";
@@ -37,9 +38,8 @@ const navigation = [
     icon: UsersIcon,
     current: false,
     children: [
-      { name: "Team", icon: UsersIcon, href: "/users/teams", current: false },
-      { name: "Role", icon: UsersIcon, href: "/users/roles", current: false },
-      { name: "User", icon: UsersIcon, href: "/users", current: false },
+      { name: "Team", href: "/users/teams", current: false },
+      { name: "User", href: "/users", current: false },
     ],
   },
 ];

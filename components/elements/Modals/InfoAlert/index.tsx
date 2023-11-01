@@ -6,31 +6,31 @@ import { Props } from "./type";
 export default function Index({
   title,
   description,
-  labelAction1,
-  actionHandler1,
-  labelAction2,
-  actionHandler2,
+  // labelAction1,
+  // actionHandler1,
+  // labelAction2,
+  // actionHandler2,
   labelReject,
 }: Props) {
   const [open, setOpen] = useState(true);
 
   const cancelButtonRef = useRef(null);
 
-  const action1Handler = () => {
-    setOpen(false);
-    actionHandler1();
-  };
+  // const action1Handler = () => {
+  //   setOpen(false);
+  //   actionHandler1();
+  // };
 
-  const action2Handler = () => {
-    setOpen(false);
-    actionHandler2();
-  };
+  // const action2Handler = () => {
+  //   setOpen(false);
+  //   actionHandler2();
+  // };
 
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog
         as="div"
-        className="relative z-100"
+        className="relative z-[100]"
         initialFocus={cancelButtonRef}
         onClose={setOpen}
       >
@@ -86,7 +86,7 @@ export default function Index({
                   >
                     {labelReject}
                   </button>
-                  <button
+                  {/* <button
                     type="button"
                     className="inline-flex w-full justify-center rounded-md bg-yellow-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
                     onClick={() => action1Handler()}
@@ -99,7 +99,7 @@ export default function Index({
                     onClick={() => action2Handler()}
                   >
                     {labelAction2}
-                  </button>
+                  </button> */}
                 </div>
               </Dialog.Panel>
             </Transition.Child>

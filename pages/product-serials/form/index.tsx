@@ -85,7 +85,7 @@ const SerialProducts: NextPageWithLayout<PageProps> = ({ products }) => {
       setIsLoading(true);
       await graphqlRequest.request(insertProductSerialMutation, {
         ...data,
-        capacity: data.capacity !== 0 ? 0 : data.capacity,
+        capacity: data.capacity !== 0 ? data.capacity : 0,
       });
 
       swal({
