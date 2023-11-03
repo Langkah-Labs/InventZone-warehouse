@@ -15,7 +15,7 @@ export default async function superTokens(
   // NOTE: We need CORS only if we are querying the APIs from a different origin
   await NextCors(req, res, {
     methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
-    origin: "http://localhost:3000",
+    origin: "*",
     credentials: true,
     allowedHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
   });
