@@ -27,6 +27,22 @@ const findAllProductsQuery = `
   }
 `;
 
+const findPOQuery = `
+  query GetSerialNumber($productOrderId: String!, $product_id: bigint!) {
+    serial_numbers(
+      where: {product_order_id: {_eq: $productOrderId}, product_id: {_eq: $product_id}}
+    ) {
+      id
+      name: product_name
+      product_id
+      product_order_id
+      quantity
+      created_at
+      updated_at
+    }
+  }
+`;
+
 const insertSerialNumberMutation = `
   mutation InsertSerialNumber($productOrderId: String!, $quantity: bigint!, $product_id: bigint!) {
     insert_serial_numbers_one(object: {product_id: $product_id, product_order_id: $productOrderId, quantity: $quantity}) {
@@ -79,16 +95,34 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({ products }) => {
 
     try {
       setIsLoading(true);
-      await graphqlRequest.request(insertSerialNumberMutation, data);
 
-      swal({
-        title: "Success!",
-        text: "Your data has been saved!",
-        icon: "success",
-        closeOnClickOutside: false,
-      }).then(() => {
-        router.push("/serial-numbers");
+      const resultSelected = await graphqlRequest.request<any>(findPOQuery, {
+        productOrderId: data.productOrderId,
+        product_id: data.product_id,
       });
+
+      if (resultSelected.serial_numbers.length > 0) {
+        swal({
+          title: "Failed!",
+          text: "Oops! It seems that you've already submitted this data before.",
+          icon: "error",
+          closeOnClickOutside: false,
+        }).then(() => {
+          if (router.isReady) {
+            router.push("/serial-numbers");
+          }
+        });
+      } else {
+        await graphqlRequest.request(insertSerialNumberMutation, data);
+        swal({
+          title: "Success!",
+          text: "Your data has been saved!",
+          icon: "success",
+          closeOnClickOutside: false,
+        }).then(() => {
+          router.push("/serial-numbers");
+        });
+      }
     } catch (err) {
       console.error(err);
       swal({
