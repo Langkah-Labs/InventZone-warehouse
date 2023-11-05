@@ -16,6 +16,8 @@ export default async function superTokens(
   await NextCors(req, res, {
     methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
     origin: [
+      "localhost:3000",
+      "http://127.0.0.1:3000",
       "http://191.96.57.242:8085",
       "http://191.96.57.242:8086",
       "http://191.96.57.242:8087",
