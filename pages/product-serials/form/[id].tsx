@@ -246,10 +246,11 @@ const SerialProducts: NextPageWithLayout<PageProps> = ({
                       <input
                         type="text"
                         id="serial-number"
-                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                        className="block w-full disabled:bg-slate-100 disabled:text-slate-400 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                         defaultValue={productSelected?.serial_number ?? ""}
                         {...register("serial_number")}
                         required
+                        disabled
                       />
                     </div>
                   </div>
