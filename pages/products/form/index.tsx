@@ -1,4 +1,5 @@
 import { ReactElement, useState } from "react";
+import { GetServerSideProps } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Raleway } from "next/font/google";
@@ -10,12 +11,32 @@ import SidebarLayout from "@/components/elements/SideBarLayout";
 import Loading from "@/components/elements/Loading";
 import Seo from "@/components/elements/Seo";
 import { ProductInput } from "@/types/product";
+import { User } from "@/types/user";
+import superTokensNode from "supertokens-node";
+import Session from "supertokens-node/recipe/session";
+import { backendConfig } from "@/config/backendConfig";
+import EmailPassword from "supertokens-node/recipe/emailpassword";
 
 const raleway = Raleway({ subsets: ["latin"] });
 
+const findUserByEmailQuery = `
+  query FindUserByEmail($email: String!) {
+    users(where: {email: {_eq: $email}}) {
+      id
+      name
+      role
+      email
+      phone
+      username
+      company
+      serial_numbers_remaining
+    }
+  }
+`;
+
 const insertProductMutation = `
-  mutation InsertProductMutation($name: String!, $description: String!, $shorten_name: String!) {
-    insert_products_one(object: {name: $name, description: $description, shorten_name: $shorten_name}) {
+  mutation InsertProductMutation($name: String!, $description: String!, $shorten_name: String!, $created_by: bigint!) {
+    insert_products_one(object: {name: $name, description: $description, shorten_name: $shorten_name, created_by: $created_by}) {
       id
       name
       shorten_name
@@ -26,7 +47,53 @@ const insertProductMutation = `
   }
 `;
 
-const Products: NextPageWithLayout = () => {
+type PageProps = {
+  user: User;
+};
+
+export const getServerSideProps: GetServerSideProps<PageProps> = async (
+  ctx
+) => {
+  superTokensNode.init(backendConfig());
+
+  let session;
+  let user;
+
+  try {
+    session = await Session.getSession(ctx.req, ctx.res, {
+      overrideGlobalClaimValidators: () => {
+        return [];
+      },
+    });
+    const userInfo = await EmailPassword.getUserById(session!.getUserId());
+    if (userInfo) {
+      const userResult = await graphqlRequest.request<any>(
+        findUserByEmailQuery,
+        {
+          email: userInfo.email,
+        }
+      );
+
+      user = userResult["users"][0];
+    }
+
+    return {
+      props: {
+        user,
+      },
+    };
+  } catch (err) {
+    console.error(err);
+
+    return {
+      props: {
+        user: {},
+      },
+    };
+  }
+};
+
+const Products: NextPageWithLayout<PageProps> = ({ user }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const {
@@ -40,7 +107,10 @@ const Products: NextPageWithLayout = () => {
 
     try {
       setIsLoading(true);
-      await graphqlRequest.request(insertProductMutation, data);
+      await graphqlRequest.request(insertProductMutation, {
+        ...data,
+        created_by: user?.id,
+      });
 
       swal({
         title: "Success!",

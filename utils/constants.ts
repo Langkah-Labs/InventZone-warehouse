@@ -24,10 +24,11 @@ export const randomSerialNumber = (name: string, id: string, qty: number) => {
     const yyyy = today.getFullYear();
     const dateNow = dd + mm + yyyy;
 
-    const companyAlias = generateCompanyAlias(id);
+    // hide for now
+    // const companyAlias = generateCompanyAlias(id);
 
     // Generate serial number
-    const SN = name + companyAlias + randomNumber + dateNow;
+    const SN = name + id + randomNumber + dateNow;
 
     // Collect serial number to array
     result.push(SN);

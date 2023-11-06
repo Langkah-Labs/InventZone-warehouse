@@ -12,8 +12,28 @@ import SidebarLayout from "@/components/elements/SideBarLayout";
 import Loading from "@/components/elements/Loading";
 import Seo from "@/components/elements/Seo";
 import { Product } from "@/types/product";
+import { User } from "@/types/user";
+import superTokensNode from "supertokens-node";
+import Session from "supertokens-node/recipe/session";
+import { backendConfig } from "@/config/backendConfig";
+import EmailPassword from "supertokens-node/recipe/emailpassword";
 
 const raleway = Raleway({ subsets: ["latin"] });
+
+const findUserByEmailQuery = `
+  query FindUserByEmail($email: String!) {
+    users(where: {email: {_eq: $email}}) {
+      id
+      name
+      role
+      email
+      phone
+      username
+      company
+      serial_numbers_remaining
+    }
+  }
+`;
 
 const findAllProductsQuery = `
   query FindAllProductsQuery {
@@ -44,8 +64,8 @@ const findPOQuery = `
 `;
 
 const insertSerialNumberMutation = `
-  mutation InsertSerialNumber($productOrderId: String!, $quantity: bigint!, $product_id: bigint!) {
-    insert_serial_numbers_one(object: {product_id: $product_id, product_order_id: $productOrderId, quantity: $quantity}) {
+  mutation InsertSerialNumber($productOrderId: String!, $quantity: bigint!, $product_id: bigint!, $created_by: bigint!) {
+    insert_serial_numbers_one(object: {product_id: $product_id, product_order_id: $productOrderId, quantity: $quantity, created_by: $created_by}) {
       id
       name: product_name
       product_id
@@ -59,15 +79,40 @@ const insertSerialNumberMutation = `
 
 type PageProps = {
   products?: Array<Product>;
+  user: User;
 };
 
-export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
+export const getServerSideProps: GetServerSideProps<PageProps> = async (
+  ctx
+) => {
+  superTokensNode.init(backendConfig());
+
+  let session;
+  let user;
+
   try {
+    session = await Session.getSession(ctx.req, ctx.res, {
+      overrideGlobalClaimValidators: () => {
+        return [];
+      },
+    });
+    const userInfo = await EmailPassword.getUserById(session!.getUserId());
+    if (userInfo) {
+      const userResult = await graphqlRequest.request<any>(
+        findUserByEmailQuery,
+        {
+          email: userInfo.email,
+        }
+      );
+
+      user = userResult["users"][0];
+    }
     const result = await graphqlRequest.request<any>(findAllProductsQuery, {});
 
     return {
       props: {
         products: result["products"],
+        user,
       },
     };
   } catch (err) {
@@ -76,12 +121,13 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
     return {
       props: {
         products: [],
+        user: {},
       },
     };
   }
 };
 
-const SerialNumbers: NextPageWithLayout<PageProps> = ({ products }) => {
+const SerialNumbers: NextPageWithLayout<PageProps> = ({ products, user }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const {
@@ -113,7 +159,10 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({ products }) => {
           }
         });
       } else {
-        await graphqlRequest.request(insertSerialNumberMutation, data);
+        await graphqlRequest.request(insertSerialNumberMutation, {
+          ...data,
+          created_by: user?.id,
+        });
         swal({
           title: "Success!",
           text: "Your data has been saved!",

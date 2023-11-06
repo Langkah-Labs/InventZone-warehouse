@@ -9,7 +9,6 @@ import { Switch } from "@headlessui/react";
 import { graphqlRequest } from "@/utils/graphql";
 import { randomSerialNumber } from "@/utils/constants";
 import SidebarLayout from "@/components/elements/SideBarLayout";
-// import ConfirmAlert from "@/components/elements/Modals/ConfirmationAlert";
 import InfoAlert from "@/components/elements/Modals/InfoAlert";
 import FormAlert from "@/components/elements/Modals/FormAlert";
 import SuccessAlert from "@/components/elements/Modals/SuccessAlert";
@@ -18,7 +17,6 @@ import Seo from "@/components/elements/Seo";
 import Header from "@/components/elements/Header";
 import Table from "@/components/elements/Table";
 import Tbody from "@/components/elements/Table/Tbody";
-import Toggle from "@/components/elements/Toggle";
 import { SerialNumber } from "@/types/serial-number";
 import superTokensNode from "supertokens-node";
 import { backendConfig } from "@/config/backendConfig";
@@ -40,6 +38,7 @@ const findAllSerialNumbersQuery = `
       updated_at
       status
       verification
+      created_by
       product {
         name
         shorten_name
@@ -61,22 +60,6 @@ const deleteSerialNumberByIdMutation = `
       }
     }
   }
-`;
-
-const insertGeneratedSerialNumbers = `
-  mutation InsertGeneratedSerialNumbers($code: String, $created_by: String, $serial_number_id: bigint) {
-    insert_generated_serial_numbers(objects: {code: $code, created_by: $created_by, serial_number_id: $serial_number_id}) {
-      affected_rows
-      returning {
-        id
-        serial_number_id
-        code
-        created_by
-        created_at
-        updated_at
-      }
-    }
-}
 `;
 
 const updateVerificationByIdMutation = `
@@ -259,7 +242,12 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({
     });
   };
 
-  const generateHandler = async (id: string, name: string, qty: number) => {
+  const generateHandler = async (
+    id: string,
+    name: string,
+    qty: number,
+    created_by: string
+  ) => {
     if (!router.isReady) return;
 
     setIsLoading(true);
@@ -282,15 +270,14 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({
       }
     }
 
-    const company = user?.company;
-    const serialNumbers = randomSerialNumber(name, company, qty);
+    const serialNumbers = randomSerialNumber(name, created_by, qty);
     setGenerateValue(serialNumbers);
 
     try {
       const objects = serialNumbers.map((serialNumber) => ({
         code: serialNumber,
         serial_number_id: id,
-        created_by: user?.id,
+        created_by: created_by,
       }));
 
       await graphqlRequest.request<any>(insertGeneratedSerialNumbersMutation, {
@@ -591,7 +578,8 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({
                                   generateHandler(
                                     serialNumber?.id,
                                     serialNumber?.product?.shorten_name,
-                                    Number(serialNumber?.quantity)
+                                    Number(serialNumber?.quantity),
+                                    serialNumber?.created_by
                                   )
                                 }
                               >
