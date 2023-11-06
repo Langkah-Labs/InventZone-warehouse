@@ -121,6 +121,9 @@ const Products: NextPageWithLayout = () => {
                         required
                         maxLength={4}
                         {...register("shorten_name")}
+                        onChange={(e) => {
+                          e.target.value = e.target.value.toUpperCase();
+                        }}
                       />
                       <p className="mt-3 text-sm leading-6 text-gray-600">
                         ex: &quot;Optical Distribution Point&quot; &gt;

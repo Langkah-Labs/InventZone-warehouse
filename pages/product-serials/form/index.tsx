@@ -1,12 +1,13 @@
-import { ReactElement, useState } from "react";
+import { Fragment, ReactElement, useState, useEffect } from "react";
 import { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
 import Link from "next/link";
 import { Raleway } from "next/font/google";
-import type { NextPageWithLayout } from "../../_app";
 import { useForm, SubmitHandler } from "react-hook-form";
 import swal from "sweetalert";
+import { Transition, Combobox } from "@headlessui/react";
+import type { NextPageWithLayout } from "../../_app";
 import { graphqlRequest } from "@/utils/graphql";
-import { useRouter } from "next/router";
 import SidebarLayout from "@/components/elements/SideBarLayout";
 import Loading from "@/components/elements/Loading";
 import Seo from "@/components/elements/Seo";
@@ -23,6 +24,17 @@ const findAllProductsQuery = `
       shorten_name
       created_at
       updated_at
+    }
+  }
+`;
+
+const findSerialNumber = `
+  query SearchSerialNumbers($code: String!) {
+    generated_serial_numbers(where: {code: {_iregex: $code}}) {
+      code
+    }
+    product_serials {
+      serial_number
     }
   }
 `;
@@ -72,6 +84,9 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
 const SerialProducts: NextPageWithLayout<PageProps> = ({ products }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchValue, setSearchValue] = useState<any[]>([]);
+  const [selectedItem, setSelectedItem] = useState<any>(null);
   const {
     register,
     handleSubmit,
@@ -110,6 +125,36 @@ const SerialProducts: NextPageWithLayout<PageProps> = ({ products }) => {
       });
     }
   };
+
+  const resetHandler = () => {
+    setSearchTerm("");
+    setSelectedItem(null);
+  };
+
+  useEffect(() => {
+    setIsLoading(true);
+    const searchHandler = async () => {
+      const resultSelected = await graphqlRequest.request<any>(
+        findSerialNumber,
+        {
+          code: searchTerm,
+        }
+      );
+      const codes = resultSelected.generated_serial_numbers.map(
+        (item: any) => item.code
+      );
+      const serialNumbers = resultSelected.product_serials.map(
+        (item: any) => item.serial_number
+      );
+      const unregisteredCodes = codes.filter(
+        (code: any) => !serialNumbers.includes(code)
+      );
+
+      setSearchValue(unregisteredCodes);
+    };
+    searchHandler();
+    setIsLoading(false);
+  }, [searchTerm]);
   return (
     <div>
       <Seo title="InventZone" />
@@ -137,15 +182,85 @@ const SerialProducts: NextPageWithLayout<PageProps> = ({ products }) => {
                       Serial Number
                       <span className="text-[#C23A3A]">*</span>
                     </label>
-                    <div className="mt-2 sm:col-span-2 sm:mt-0">
-                      <input
-                        type="text"
-                        id="serial-number"
-                        defaultValue={""}
-                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                        {...register("serial_number")}
-                        required
-                      />
+                    <div className="w-80 relative">
+                      <Combobox value={selectedItem} onChange={setSelectedItem}>
+                        {({ open }) => (
+                          <>
+                            <div className="relative mt-2 sm:col-span-2 sm:mt-0">
+                              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  strokeWidth={1.5}
+                                  stroke="currentColor"
+                                  className="w-4 h-4"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+                                  />
+                                </svg>
+                              </div>
+                              <Combobox.Input
+                                type="text"
+                                placeholder="Type your serial number..."
+                                value={selectedItem ?? searchTerm}
+                                {...register("serial_number")}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                              />
+                              {(selectedItem || searchTerm !== "") && (
+                                <div
+                                  className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer"
+                                  onClick={() => resetHandler()}
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth="1.5"
+                                    stroke="currentColor"
+                                    className="w-4 h-4"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                                    />
+                                  </svg>
+                                </div>
+                              )}
+                            </div>
+                            <Transition show={open} as={Fragment}>
+                              <Combobox.Options className="w-full bg-white absolute z-50 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                                {isLoading && (
+                                  <p className="text-gray-500 px-4 py-2">
+                                    Loading...
+                                  </p>
+                                )}
+                                {searchTerm &&
+                                  searchValue.map((item) => (
+                                    <Combobox.Option
+                                      key={item}
+                                      value={item}
+                                      className={({ active, selected }) =>
+                                        `${
+                                          active
+                                            ? "text-white bg-indigo-600"
+                                            : "text-gray-900"
+                                        } cursor-pointer select-none relative py-2 pl-3 pr-9`
+                                      }
+                                    >
+                                      {item}
+                                    </Combobox.Option>
+                                  ))}
+                              </Combobox.Options>
+                            </Transition>
+                          </>
+                        )}
+                      </Combobox>
                     </div>
                   </div>
 
