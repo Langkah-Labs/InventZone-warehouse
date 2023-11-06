@@ -11,12 +11,32 @@ import SidebarLayout from "@/components/elements/SideBarLayout";
 import Loading from "@/components/elements/Loading";
 import Seo from "@/components/elements/Seo";
 import { Product, ProductInput } from "@/types/product";
+import { User } from "@/types/user";
+import superTokensNode from "supertokens-node";
+import Session from "supertokens-node/recipe/session";
+import { backendConfig } from "@/config/backendConfig";
+import EmailPassword from "supertokens-node/recipe/emailpassword";
 
 const raleway = Raleway({ subsets: ["latin"] });
 
+const findUserByEmailQuery = `
+  query FindUserByEmail($email: String!) {
+    users(where: {email: {_eq: $email}}) {
+      id
+      name
+      role
+      email
+      phone
+      username
+      company
+      serial_numbers_remaining
+    }
+  }
+`;
+
 const insertProductMutation = `
-  mutation InsertProductMutation($name: String!, $description: String!) {
-    insert_products_one(object: {name: $name, description: $description}) {
+  mutation InsertProductMutation($name: String!, $description: String!, $shorten_name: String!, $created_by: bigint!) {
+    insert_products_one(object: {name: $name, description: $description, shorten_name: $shorten_name, created_by: $created_by}) {
       id
       name
       shorten_name
@@ -41,8 +61,8 @@ const findProductByIdQuery = `
 `;
 
 const updateProductByIdMutation = `
-  mutation UpdateProductById($id: bigint!, $name: String!, $description: String!, $shorten_name: String!) {
-    update_products_by_pk(pk_columns: {id: $id}, _set: {name: $name, description: $description, shorten_name: $shorten_name}) {
+  mutation UpdateProductById($id: bigint!, $name: String!, $description: String!, $shorten_name: String!, $created_by: bigint!) {
+    update_products_by_pk(pk_columns: {id: $id}, _set: {name: $name, description: $description, shorten_name: $shorten_name, created_by: $created_by}) {
       id
       name
       shorten_name
@@ -55,14 +75,35 @@ const updateProductByIdMutation = `
 
 type PageProps = {
   product?: Product;
+  user: User;
 };
 
 export const getServerSideProps: GetServerSideProps<PageProps> = async (
   ctx
 ) => {
   const { id } = ctx.query;
+  superTokensNode.init(backendConfig());
+
+  let session;
+  let user;
 
   try {
+    session = await Session.getSession(ctx.req, ctx.res, {
+      overrideGlobalClaimValidators: () => {
+        return [];
+      },
+    });
+    const userInfo = await EmailPassword.getUserById(session!.getUserId());
+    if (userInfo) {
+      const userResult = await graphqlRequest.request<any>(
+        findUserByEmailQuery,
+        {
+          email: userInfo.email,
+        }
+      );
+
+      user = userResult["users"][0];
+    }
     const result = await graphqlRequest.request<any>(findProductByIdQuery, {
       id,
     });
@@ -70,6 +111,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
     return {
       props: {
         product: result["products_by_pk"],
+        user,
       },
     };
   } catch (err) {
@@ -78,12 +120,13 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
     return {
       props: {
         product: {},
+        user: {},
       },
     };
   }
 };
 
-const Products: NextPageWithLayout<PageProps> = ({ product }) => {
+const Products: NextPageWithLayout<PageProps> = ({ product, user }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const {
@@ -103,9 +146,13 @@ const Products: NextPageWithLayout<PageProps> = ({ product }) => {
         await graphqlRequest.request(updateProductByIdMutation, {
           ...data,
           id,
+          created_by: user?.id,
         });
       } else {
-        await graphqlRequest.request(insertProductMutation, data);
+        await graphqlRequest.request(insertProductMutation, {
+          ...data,
+          created_by: user?.id,
+        });
       }
 
       swal({
