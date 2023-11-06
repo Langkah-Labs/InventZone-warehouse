@@ -13,8 +13,28 @@ import Loading from "@/components/elements/Loading";
 import Seo from "@/components/elements/Seo";
 import { ProductSerialsInput } from "@/types/productSerials";
 import { Product } from "@/types/product";
+import { User } from "@/types/user";
+import superTokensNode from "supertokens-node";
+import Session from "supertokens-node/recipe/session";
+import { backendConfig } from "@/config/backendConfig";
+import EmailPassword from "supertokens-node/recipe/emailpassword";
 
 const raleway = Raleway({ subsets: ["latin"] });
+
+const findUserByEmailQuery = `
+  query FindUserByEmail($email: String!) {
+    users(where: {email: {_eq: $email}}) {
+      id
+      name
+      role
+      email
+      phone
+      username
+      company
+      serial_numbers_remaining
+    }
+  }
+`;
 
 const findAllProductsQuery = `
   query FindAllProductsQuery {
@@ -40,8 +60,8 @@ const findSerialNumber = `
 `;
 
 const insertProductSerialMutation = `
-  mutation InsertProductSerialsMutation($serial_number: String!, $product_id: bigint!, $capacity: bigint, $optical_power: String, $description: String) {
-    insert_product_serials(objects: {serial_number: $serial_number, product_id: $product_id, capacity: $capacity, optical_power: $optical_power, description: $description}) {
+  mutation InsertProductSerialsMutation($serial_number: String!, $product_id: bigint!, $capacity: bigint, $optical_power: String, $description: String, $created_by: bigint!) {
+    insert_product_serials(objects: {serial_number: $serial_number, product_id: $product_id, capacity: $capacity, optical_power: $optical_power, description: $description, created_by: $created_by}) {
       affected_rows
       returning {
         capacity
@@ -59,15 +79,40 @@ const insertProductSerialMutation = `
 
 type PageProps = {
   products?: Array<Product>;
+  user: User;
 };
 
-export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
+export const getServerSideProps: GetServerSideProps<PageProps> = async (
+  ctx
+) => {
+  superTokensNode.init(backendConfig());
+
+  let session;
+  let user;
   try {
+    session = await Session.getSession(ctx.req, ctx.res, {
+      overrideGlobalClaimValidators: () => {
+        return [];
+      },
+    });
+    const userInfo = await EmailPassword.getUserById(session!.getUserId());
+    if (userInfo) {
+      const userResult = await graphqlRequest.request<any>(
+        findUserByEmailQuery,
+        {
+          email: userInfo.email,
+        }
+      );
+
+      user = userResult["users"][0];
+    }
+
     const result = await graphqlRequest.request<any>(findAllProductsQuery, {});
 
     return {
       props: {
         products: result["products"],
+        user,
       },
     };
   } catch (err) {
@@ -76,12 +121,13 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
     return {
       props: {
         products: [],
+        user: {},
       },
     };
   }
 };
 
-const SerialProducts: NextPageWithLayout<PageProps> = ({ products }) => {
+const SerialProducts: NextPageWithLayout<PageProps> = ({ products, user }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -101,6 +147,7 @@ const SerialProducts: NextPageWithLayout<PageProps> = ({ products }) => {
       await graphqlRequest.request(insertProductSerialMutation, {
         ...data,
         capacity: data.capacity !== 0 ? data.capacity : 0,
+        created_by: user?.id,
       });
 
       swal({
