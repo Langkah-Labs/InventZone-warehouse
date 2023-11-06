@@ -12,8 +12,28 @@ import Loading from "@/components/elements/Loading";
 import Seo from "@/components/elements/Seo";
 import { Product } from "@/types/product";
 import { SerialNumber, SerialNumberInput } from "@/types/serial-number";
+import { User } from "@/types/user";
+import superTokensNode from "supertokens-node";
+import Session from "supertokens-node/recipe/session";
+import { backendConfig } from "@/config/backendConfig";
+import EmailPassword from "supertokens-node/recipe/emailpassword";
 
 const raleway = Raleway({ subsets: ["latin"] });
+
+const findUserByEmailQuery = `
+  query FindUserByEmail($email: String!) {
+    users(where: {email: {_eq: $email}}) {
+      id
+      name
+      role
+      email
+      phone
+      username
+      company
+      serial_numbers_remaining
+    }
+  }
+`;
 
 const findAllProductsQuery = `
   query FindAllProductsQuery {
@@ -46,10 +66,11 @@ const updateSerialNumberByIdMutation = `
     $id: bigint!,
     $name: String,
     $productOrderId: String!,
-    $quantity: bigint!
-    $product_id: bigint!
+    $quantity: bigint!,
+    $product_id: bigint!,
+    $created_by: bigint!
   ) {
-    update_serial_numbers_by_pk(pk_columns: {id: $id}, _set: {id: $id, product_name: $name, product_order_id: $productOrderId, quantity: $quantity, product_id: $product_id}) {
+    update_serial_numbers_by_pk(pk_columns: {id: $id}, _set: {id: $id, product_name: $name, product_order_id: $productOrderId, quantity: $quantity, product_id: $product_id, created_by: $created_by}) {
       id
       name: product_name
       product_id
@@ -64,13 +85,36 @@ const updateSerialNumberByIdMutation = `
 type PageProps = {
   products?: Array<Product>;
   serialNumber?: SerialNumber;
+  user: User;
 };
 
 export const getServerSideProps: GetServerSideProps<PageProps> = async (
   ctx
 ) => {
   const { id } = ctx.query;
+  superTokensNode.init(backendConfig());
+
+  let session;
+  let user;
+
   try {
+    session = await Session.getSession(ctx.req, ctx.res, {
+      overrideGlobalClaimValidators: () => {
+        return [];
+      },
+    });
+    const userInfo = await EmailPassword.getUserById(session!.getUserId());
+    if (userInfo) {
+      const userResult = await graphqlRequest.request<any>(
+        findUserByEmailQuery,
+        {
+          email: userInfo.email,
+        }
+      );
+
+      user = userResult["users"][0];
+    }
+
     const result = await graphqlRequest.request<any>(findAllProductsQuery, {});
 
     const resultSelected = await graphqlRequest.request<any>(
@@ -84,6 +128,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
       props: {
         products: result["products"],
         serialNumber: resultSelected["serial_numbers_by_pk"],
+        user,
       },
     };
   } catch (err) {
@@ -92,6 +137,8 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
     return {
       props: {
         products: [],
+        serialNumber: [],
+        user: {},
       },
     };
   }
@@ -100,6 +147,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
 const SerialNumbers: NextPageWithLayout<PageProps> = ({
   products,
   serialNumber,
+  user,
 }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -118,7 +166,10 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({
       setIsLoading(true);
       await graphqlRequest.request(updateSerialNumberByIdMutation, {
         ...data,
+        product_id: serialNumber?.product_id,
+        productOrderId: serialNumber?.product_order_id,
         id,
+        created_by: user?.id,
       });
 
       swal({
@@ -175,11 +226,12 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({
                     </label>
                     <div className="mt-2 sm:col-span-2 sm:mt-0">
                       <input
+                        {...register("productOrderId")}
                         type="text"
                         id="productOrderId"
                         className="block w-full disabled:bg-slate-100 disabled:text-slate-400 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                        defaultValue={serialNumber?.product_order_id ?? ""}
-                        {...register("productOrderId")}
+                        // defaultValue={serialNumber?.product_order_id ?? ""}
+                        value={serialNumber?.product_order_id}
                         required
                         disabled
                       />
@@ -215,10 +267,10 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({
                     </label>
                     <div className="mt-2 sm:col-span-2 sm:mt-0">
                       <select
+                        {...register("product_id")}
                         id="product-name"
                         className="block w-full disabled:bg-slate-100 disabled:text-slate-400 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                         defaultValue={serialNumber?.product_id ?? ""}
-                        {...register("product_id")}
                         required
                         disabled
                       >
@@ -242,11 +294,11 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({
                     </label>
                     <div className="mt-2 sm:col-span-2 sm:mt-0">
                       <input
+                        {...register("quantity")}
                         type="number"
                         id="quantity"
                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                         defaultValue={serialNumber?.quantity ?? ""}
-                        {...register("quantity")}
                         required
                       />
                     </div>
