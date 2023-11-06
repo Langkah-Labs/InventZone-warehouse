@@ -38,6 +38,7 @@ const findAllSerialNumbersQuery = `
       updated_at
       status
       verification
+      created_by
       product {
         name
         shorten_name
@@ -241,7 +242,12 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({
     });
   };
 
-  const generateHandler = async (id: string, name: string, qty: number) => {
+  const generateHandler = async (
+    id: string,
+    name: string,
+    qty: number,
+    created_by: string
+  ) => {
     if (!router.isReady) return;
 
     setIsLoading(true);
@@ -264,15 +270,14 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({
       }
     }
 
-    const company = user?.company;
-    const serialNumbers = randomSerialNumber(name, company, qty);
+    const serialNumbers = randomSerialNumber(name, created_by, qty);
     setGenerateValue(serialNumbers);
 
     try {
       const objects = serialNumbers.map((serialNumber) => ({
         code: serialNumber,
         serial_number_id: id,
-        created_by: user?.id,
+        created_by: created_by,
       }));
 
       await graphqlRequest.request<any>(insertGeneratedSerialNumbersMutation, {
@@ -573,7 +578,8 @@ const SerialNumbers: NextPageWithLayout<PageProps> = ({
                                   generateHandler(
                                     serialNumber?.id,
                                     serialNumber?.product?.shorten_name,
-                                    Number(serialNumber?.quantity)
+                                    Number(serialNumber?.quantity),
+                                    serialNumber?.created_by
                                   )
                                 }
                               >
