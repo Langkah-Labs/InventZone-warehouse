@@ -1,0 +1,31 @@
+table:
+  name: serial_numbers
+  schema: public
+object_relationships:
+  - name: product
+    using:
+      manual_configuration:
+        column_mapping:
+          product_id: id
+        insertion_order: null
+        remote_table:
+          name: products
+          schema: public
+  - name: user
+    using:
+      foreign_key_constraint_on: created_by
+array_relationships:
+  - name: files
+    using:
+      foreign_key_constraint_on:
+        column: serial_number_id
+        table:
+          name: files
+          schema: public
+  - name: generated_serial_numbers
+    using:
+      foreign_key_constraint_on:
+        column: serial_number_id
+        table:
+          name: generated_serial_numbers
+          schema: public

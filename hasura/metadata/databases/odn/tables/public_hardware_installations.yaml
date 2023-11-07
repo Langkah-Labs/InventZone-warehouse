@@ -1,0 +1,7 @@
+table:
+  name: hardware_installations
+  schema: public
+object_relationships:
+  - name: product_serial
+    using:
+      foreign_key_constraint_on: product_serial_id

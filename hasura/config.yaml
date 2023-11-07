@@ -1,0 +1,7 @@
+version: 3
+endpoint: http://191.96.57.242:8080
+admin_secret: InventZone_2023
+metadata_directory: metadata
+actions:
+  kind: synchronous
+  handler_webhook_baseurl: http://localhost:3000
