@@ -1,7 +1,0 @@
-table:
-  name: files
-  schema: public
-object_relationships:
-  - name: serial_number
-    using:
-      foreign_key_constraint_on: serial_number_id
