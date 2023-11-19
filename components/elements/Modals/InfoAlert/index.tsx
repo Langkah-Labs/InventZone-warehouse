@@ -1,6 +1,7 @@
 import React, { Fragment, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
+import { useRouter } from "next/router";
 import { Props } from "./type";
 
 export default function Index({
@@ -14,6 +15,7 @@ export default function Index({
 }: Props) {
   const [open, setOpen] = useState(true);
 
+  const router = useRouter();
   const cancelButtonRef = useRef(null);
 
   // const action1Handler = () => {
@@ -25,6 +27,11 @@ export default function Index({
   //   setOpen(false);
   //   actionHandler2();
   // };
+
+  const handlerClose = () => {
+    setOpen(false);
+    router.reload();
+  };
 
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -81,7 +88,7 @@ export default function Index({
                   <button
                     type="button"
                     className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0"
-                    onClick={() => setOpen(false)}
+                    onClick={() => handlerClose()}
                     ref={cancelButtonRef}
                   >
                     {labelReject}
