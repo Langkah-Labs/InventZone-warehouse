@@ -1,8 +1,9 @@
 import { useState } from "react";
-import Link from "next/link";
+import { useRouter } from "next/router";
 import { Raleway } from "next/font/google";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { signUp } from "supertokens-web-js/recipe/emailpassword";
+import swal from "sweetalert";
 
 const raleway = Raleway({ subsets: ["latin"] });
 
@@ -22,6 +23,7 @@ export default function Register() {
     handleSubmit,
     formState: { errors },
   } = useForm<RegisterInput>();
+  const router = useRouter();
   const [passwordVisibility, setPasswordVisibility] = useState({
     password: false,
     passwordConfirmation: false,
@@ -72,7 +74,14 @@ export default function Register() {
           }
         });
       } else {
-        window.location.href = "/";
+        swal({
+          title: "Success!",
+          text: "Your data has been saved!",
+          icon: "success",
+          closeOnClickOutside: false,
+        }).then(() => {
+          router.push("/users");
+        });
       }
     } catch (err: any) {
       if (err.isSuperTokensGeneralError === true) {
@@ -95,6 +104,15 @@ export default function Register() {
 
   const protectedPassword = (hidden: any) => (hidden ? "text" : "password");
 
+  const departments = [
+    { id: 0, label: "Department", value: "" },
+    { id: 1, label: "Warehouse", value: "warehouse" },
+    { id: 2, label: "Report", value: "report" },
+    { id: 3, label: "Vendor", value: "vendor" },
+    { id: 4, label: "Mobile - Installation", value: "installation" },
+    { id: 5, label: "Mobile - Project", value: "project" },
+  ];
+
   return (
     <div className={`flex min-h-full flex-1 ${raleway.className}`}>
       <div className="flex flex-1 flex-col justify-center py-12">
@@ -106,6 +124,13 @@ export default function Register() {
           <div className="mt-10 font-sans">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div className="mt-2">
+                <label
+                  htmlFor="company"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Company Name
+                  <span className="text-[#C23A3A]">&nbsp;*</span>
+                </label>
                 <div className="relative mt-2 rounded-md shadow-sm">
                   <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
                     <svg
@@ -136,6 +161,13 @@ export default function Register() {
               </div>
 
               <div className="mt-2">
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Name
+                  <span className="text-[#C23A3A]">&nbsp;*</span>
+                </label>
                 <div className="relative mt-2 rounded-md shadow-sm">
                   <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
                     <svg
@@ -166,35 +198,13 @@ export default function Register() {
               </div>
 
               <div className="mt-2">
-                <div className="relative mt-2 rounded-md shadow-sm">
-                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      fill="none"
-                    >
-                      <path
-                        stroke="#2A4365"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M20 21v-2.069c0-1.097-.421-2.15-1.172-2.926A3.933 3.933 0 0 0 16 14.793H8c-1.06 0-2.078.436-2.828 1.212A4.211 4.211 0 0 0 4 18.931v2.07M12 11.276c2.21 0 4-1.853 4-4.138S14.21 3 12 3 8 4.853 8 7.138s1.79 4.138 4 4.138Z"
-                      />
-                    </svg>
-                  </div>
-                  <input
-                    type="text"
-                    id="username"
-                    className="block w-full bg-[#4F5C6233] rounded-md border-0 py-5 pl-14 pr-12 text-[#40404099] placeholder:text-[#40404099] focus:ring-2 focus:ring-inset focus:[#4F99FF] sm:text-sm sm:leading-6"
-                    placeholder="Username"
-                    aria-describedby="username"
-                    {...register("username")}
-                  />
-                </div>
-              </div>
-
-              <div className="mt-2">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Email
+                  <span className="text-[#C23A3A]">&nbsp;*</span>
+                </label>
                 <div className="relative mt-2 rounded-md shadow-sm">
                   <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
                     <svg
@@ -233,6 +243,83 @@ export default function Register() {
               </div>
 
               <div className="mt-2">
+                <label
+                  htmlFor="department"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Department
+                  <span className="text-[#C23A3A]">&nbsp;*</span>
+                </label>
+                <div className="relative mt-2 rounded-md shadow-sm">
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      className="w-6 h-6"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"
+                      />
+                    </svg>
+                  </div>
+                  <select
+                    id="department"
+                    placeholder="Phone number"
+                    className="block w-full bg-[#4F5C6233] rounded-md border-0 py-5 pl-14 pr-12 text-[#40404099] placeholder:text-[#40404099] focus:ring-2 focus:ring-inset focus:[#4F99FF] sm:text-sm sm:leading-6"
+                    defaultValue=""
+                    required
+                    // {...register("department")}
+                  >
+                    {departments?.map((item, i) => (
+                      <option value={item.value} key={i}>
+                        {item.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="mt-2">
+                <label
+                  htmlFor="username"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Username
+                </label>
+                <div className="relative mt-2 rounded-md shadow-sm">
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      fill="none"
+                    >
+                      <path
+                        stroke="#2A4365"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M20 21v-2.069c0-1.097-.421-2.15-1.172-2.926A3.933 3.933 0 0 0 16 14.793H8c-1.06 0-2.078.436-2.828 1.212A4.211 4.211 0 0 0 4 18.931v2.07M12 11.276c2.21 0 4-1.853 4-4.138S14.21 3 12 3 8 4.853 8 7.138s1.79 4.138 4 4.138Z"
+                      />
+                    </svg>
+                  </div>
+                  <input
+                    type="text"
+                    id="username"
+                    className="block w-full bg-[#4F5C6233] rounded-md border-0 py-5 pl-14 pr-12 text-[#40404099] placeholder:text-[#40404099] focus:ring-2 focus:ring-inset focus:[#4F99FF] sm:text-sm sm:leading-6"
+                    placeholder="Username"
+                    aria-describedby="username"
+                    {...register("username")}
+                  />
+                </div>
+              </div>
+
+              {/* <div className="mt-2">
                 <div className="relative mt-2 rounded-md shadow-sm">
                   <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
                     <svg
@@ -326,9 +413,15 @@ export default function Register() {
                     </svg>
                   </button>
                 </div>
-              </div>
+              </div> */}
 
               <div className="mt-2">
+                <label
+                  htmlFor="phone"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Phone Number
+                </label>
                 <div className="relative mt-2 rounded-md shadow-sm">
                   <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
                     <svg
@@ -403,12 +496,12 @@ export default function Register() {
             <h1 className="font-medium text-3xl">INVENTZONE</h1>
           </div>
           <p>Start managing your assets better and faster</p>
-          <Link
+          {/* <Link
             href="/auth/login"
             className="border-2 border-white rounded-sm py-4 px-14"
           >
             Do you want to Log In?
-          </Link>
+          </Link> */}
         </div>
       </div>
     </div>
