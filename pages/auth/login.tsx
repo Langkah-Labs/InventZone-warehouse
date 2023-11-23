@@ -112,12 +112,12 @@ export default function Login() {
             <h1 className="font-medium text-3xl">INVENTZONE</h1>
           </div>
           <p>Start managing your assets better and faster</p>
-          <Link
+          {/* <Link
             href="/users/register"
             className="border-2 border-white rounded-sm py-4 px-14"
           >
             {"Don't have an account?"}
-          </Link>
+          </Link> */}
         </div>
       </div>
       <div className="flex flex-1 flex-col justify-center py-12">

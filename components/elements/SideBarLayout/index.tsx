@@ -387,7 +387,7 @@ export default function SidebarLayout({ children }: any) {
                   <a
                     href="https://forms.gle/pXsPynSdGfVtcKJ89"
                     target="_blank"
-                    className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-red-400 hover:bg-red-50 hover:text-red-600"
+                    className="group border w-fit border-red-400 -mx-2 flex gap-x-3 rounded-md p-2 px-4 text-sm font-semibold leading-6 text-red-400 hover:bg-red-400 hover:text-white"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
