@@ -385,7 +385,7 @@ export default function SidebarLayout({ children }: any) {
                 </li>
                 <li>
                   <a
-                    href="https://forms.gle/pXsPynSdGfVtcKJ89"
+                    href="https://forms.gle/uGkFgoRtJVgwTmc76"
                     target="_blank"
                     className="group border w-fit border-red-400 -mx-2 flex gap-x-3 rounded-md p-2 px-4 text-sm font-semibold leading-6 text-red-400 hover:bg-red-400 hover:text-white"
                   >
