@@ -32,8 +32,10 @@ export const backendConfig = (): TypeInput => {
     framework: "express",
     supertokens: {
       // https://try.supertokens.com is for demo purposes. Replace this with the address of your core instance (sign up on supertokens.com), or self host a core.
-      connectionURI: "http://191.96.57.242:3567",
-      // connectionURI: "http://195.35.37.152:3567",
+      // development
+      // connectionURI: "http://191.96.57.242:3567",
+      // production
+      connectionURI: "https://auth.kadaka.id",
       // apiKey: <API_KEY(if configured)>,
     },
     appInfo,
