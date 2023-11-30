@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import { Raleway } from "next/font/google";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { signUp } from "supertokens-web-js/recipe/emailpassword";
+import Monolith from "@/utils/api/monolith";
 import swal from "sweetalert";
 
 const raleway = Raleway({ subsets: ["latin"] });
@@ -12,9 +12,8 @@ type RegisterInput = {
   username: string;
   name: string;
   email: string;
-  password: string;
-  passwordConfirmation: string;
   phone: string;
+  department: string;
 };
 
 export default function Register() {
@@ -30,66 +29,25 @@ export default function Register() {
   });
 
   const onSubmit: SubmitHandler<RegisterInput> = async (data) => {
+    const monolith = new Monolith();
     try {
-      let response = await signUp({
-        formFields: [
-          {
-            id: "company",
-            value: data.company,
-          },
-          {
-            id: "username",
-            value: data.username,
-          },
-          {
-            id: "name",
-            value: data.name,
-          },
-          {
-            id: "email",
-            value: data.email,
-          },
-          {
-            id: "password",
-            value: data.password,
-          },
-          {
-            id: "phone",
-            value: data.phone,
-          },
-        ],
-      });
+      await monolith.createUser(data);
 
-      if (response.status === "FIELD_ERROR") {
-        // one of the input formFields failed validaiton
-        response.formFields.forEach((formField) => {
-          if (formField.id === "email") {
-            // Email validation failed (for example incorrect email syntax),
-            // or the email is not unique.
-            window.alert(formField.error);
-          } else if (formField.id === "password") {
-            // Password validation failed.
-            // Maybe it didn't match the password strength
-            window.alert(formField.error);
-          }
-        });
-      } else {
-        swal({
-          title: "Success!",
-          text: "Your data has been saved!",
-          icon: "success",
-          closeOnClickOutside: false,
-        }).then(() => {
-          router.push("/users");
-        });
-      }
-    } catch (err: any) {
-      if (err.isSuperTokensGeneralError === true) {
-        // this may be a custom error message sent from the API by you.
-        window.alert(err.message);
-      } else {
-        window.alert("Oops! Something went wrong.");
-      }
+      swal({
+        title: "Success!",
+        text: "Your data has been saved!",
+        icon: "success",
+        closeOnClickOutside: false,
+      }).then(() => {
+        router.push("/users");
+      });
+    } catch (err) {
+      swal({
+        title: "Failed!",
+        text: "Oops, something went wrong",
+        icon: "error",
+        closeOnClickOutside: false,
+      });
     }
   };
 
@@ -256,13 +214,13 @@ export default function Register() {
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
-                      stroke-width="1.5"
+                      strokeWidth="1.5"
                       stroke="currentColor"
                       className="w-6 h-6"
                     >
                       <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                         d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"
                       />
                     </svg>
@@ -273,10 +231,14 @@ export default function Register() {
                     className="block w-full bg-[#4F5C6233] rounded-md border-0 py-5 pl-14 pr-12 text-[#40404099] placeholder:text-[#40404099] focus:ring-2 focus:ring-inset focus:[#4F99FF] sm:text-sm sm:leading-6"
                     defaultValue=""
                     required
-                    // {...register("department")}
+                    {...register("department")}
                   >
                     {departments?.map((item, i) => (
-                      <option value={item.value} key={i}>
+                      <option
+                        value={item.value}
+                        key={i}
+                        disabled={item.id === 0}
+                      >
                         {item.label}
                       </option>
                     ))}
