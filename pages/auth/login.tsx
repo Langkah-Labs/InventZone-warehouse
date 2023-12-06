@@ -1,11 +1,28 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { signIn } from "supertokens-web-js/recipe/emailpassword";
+import { graphqlRequest } from "@/utils/graphql";
 
 import { Raleway } from "next/font/google";
 
 const raleway = Raleway({ subsets: ["latin"] });
+
+const findUserByEmailQuery = `
+  query FindUserByEmail($email: String!) {
+    users(where: {email: {_eq: $email}}) {
+      id
+      name
+      role
+      email
+      phone
+      username
+      company
+      serial_numbers_remaining
+    }
+  }
+`;
 
 type LoginInput = {
   email: string;
@@ -13,6 +30,7 @@ type LoginInput = {
 };
 
 export default function Login() {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -50,7 +68,20 @@ export default function Login() {
       } else {
         // sign in successful. The session tokens are automatically handled by
         // the frontend SDK.
-        window.location.href = "/";
+
+        const userResult = await graphqlRequest.request<any>(
+          findUserByEmailQuery,
+          {
+            email: data.email,
+          }
+        );
+
+        const user = userResult["users"][0];
+        if (user) {
+          sessionStorage.setItem("user", JSON.stringify(user));
+        }
+
+        router.replace("/");
       }
     } catch (err: any) {
       if (err.isSuperTokensGeneralError === true) {
