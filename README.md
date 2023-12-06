@@ -1,38 +1,76 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# InventZone Warehouse
+
+This project contains a dashboard application to interact with data for InventZone mobile app and it is also used for handling the main business logic of the entire system.
+
+## Table of Contents
+
+- [InventZone Warehouse](#inventzone-warehouse)
+  - [Table of Contents](#table-of-contents)
+  - [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Development](#development)
+    - [Deployment](#deployment)
+  - [Database Schema](#database-schema)
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+Before running the application, you need to install and configure several tools below.
+
+- [NodeJS](https://nodejs.org/en)
+- [SuperTokens](https://supertokens.com/)
+- [Docker](https://www.docker.com/)
+- [PostgreSQL](https://www.postgresql.org/)
+- [Hasura GraphQL Engine](https://hasura.io/docs/latest/getting-started/overview/)
+
+If you do not want to configuring all of them, we also provide Docker Compose file in order to spin up instantly. Run the below command and you are ready to go.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+$ docker compose up -d
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Development
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+In this section we will explain on how to run this project locally or in the development mode. The application needs configuration file in order to runs properly. Duplicate the `.env.example` file to `.env` with this following command
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+```bash
+$ cp .env.example .env
+```
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+then fill up all the mandatory fields inside the `.env` file. Next, open the `backendConfig.ts` file inside the config folder and change this configuration.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+```js
+supertokens: {
+  connectionURI: "http://127.0.0.1:3567",
+},
+```
 
-## Learn More
+After that, you should change the application info that placed into the `config/` folder. Fill up with the following information for development purpose
 
-To learn more about Next.js, take a look at the following resources:
+```js
+export const appInfo = {
+  appName: "ODN Apps",
+  apiDomain: "http://localhost:3000",
+  websiteDomain: "http://localhost:3000",
+  apiBasePath: "/api/auth",
+  websiteBasePath: "/auth",
+};
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Now, you can install and start the development server by using this command
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+```bash
+$ npm install
+$ npm run dev
+```
 
-## Deploy on Vercel
+then open your browser and access to the `http://127.0.0.1:3000`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Warehouse application rely on the Docker container to deploy the application into production environment.
+
+## Database Schema
+
+![Database schema of InventZone application](docs/db_schema.png)
