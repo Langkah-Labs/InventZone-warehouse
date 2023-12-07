@@ -43,6 +43,22 @@ export default function Login() {
 
   const onSubmit: SubmitHandler<LoginInput> = async (data) => {
     try {
+      const userResult = await graphqlRequest.request<any>(
+        findUserByEmailQuery,
+        {
+          email: data.email,
+        }
+      );
+
+      const user = userResult["users"][0];
+      const role = user?.role;
+      const grantedRoles = ["warehouse", "demo"];
+      if (!grantedRoles.includes(role)) {
+        window.alert("Email and password combination is incorrect.");
+
+        return;
+      }
+
       let response = await signIn({
         formFields: [
           {
@@ -64,21 +80,13 @@ export default function Login() {
           }
         });
       } else if (response.status === "WRONG_CREDENTIALS_ERROR") {
-        window.alert("Email password combination is incorrect.");
+        window.alert("Email and password combination is incorrect.");
       } else {
         // sign in successful. The session tokens are automatically handled by
         // the frontend SDK.
 
-        const userResult = await graphqlRequest.request<any>(
-          findUserByEmailQuery,
-          {
-            email: data.email,
-          }
-        );
-
-        const user = userResult["users"][0];
         if (user) {
-          sessionStorage.setItem("user", JSON.stringify(user));
+          localStorage.setItem("user", JSON.stringify(user));
         }
 
         router.replace("/");

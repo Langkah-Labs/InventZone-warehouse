@@ -56,7 +56,7 @@ export default function SidebarLayout({ children }: any) {
   const [user, setUser] = useState<any>({});
 
   useEffect(() => {
-    const userInfo = sessionStorage.getItem("user");
+    const userInfo = localStorage.getItem("user");
     if (userInfo) {
       const data = JSON.parse(userInfo);
       setUser(data);
@@ -80,7 +80,9 @@ export default function SidebarLayout({ children }: any) {
 
     await Session.signOut();
 
-    router.push("/auth/login");
+    localStorage.removeItem("user");
+
+    router.replace("/auth/login");
   };
 
   return (
